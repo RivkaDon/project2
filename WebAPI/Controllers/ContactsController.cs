@@ -17,6 +17,7 @@ namespace WebAPI.Controllers
             userService = new UserService();
             chatService = new ChatService();
         }
+
         // GET: api/<ContactsController>
         [HttpGet]
         public IEnumerable<string> Get()
