@@ -59,9 +59,9 @@ namespace WebAPI.Controllers
         /// <param name="id"></param>
         /// <param name="value"></param>
         [HttpPut("{id}")]
-        public void Put(string id, [FromBody] string value)
+        public void Put([FromBody] RequestEditContact request)
         {
-
+            contactService.Edit(request.Id, request.Name, request.Server, request.Last, request.LastDate);
         }
 
         // DELETE api/<ContactsController>/{id}

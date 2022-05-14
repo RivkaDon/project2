@@ -35,12 +35,12 @@ namespace WebAPI.Services
             if (!Exists(id)) return null;
             return GetAllContacts().Find(e => e.Id == id);
         }
-        public void Edit(string id, string name = null, string last = null, DateTime? lastDate = null)
+        public void Edit(string id, string name = null, string server = null, string last = null, DateTime? lastDate = null)
         {
             if (Exists(id))
             {
                 Contact contact = Get(id);
-                user.Contacts.Edit(contact, name, last, lastDate);
+                user.Contacts.Edit(contact, name, server, last, lastDate);
             }
         }
         public void Delete(string id)
