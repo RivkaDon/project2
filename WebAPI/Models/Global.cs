@@ -2,6 +2,6 @@
 {
     public class Global
     {
-        public static string UserName = "harry";
+        public static string Id = "1";
     }
 }

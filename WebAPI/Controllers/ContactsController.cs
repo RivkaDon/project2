@@ -10,11 +10,11 @@ namespace WebAPI.Controllers
     [ApiController]
     public class ContactsController : ControllerBase
     {
-        private IContactService userService;
+        private IContactService contactService;
         private IChatService chatService;
         public ContactsController()
         {
-            userService = new UserService();
+            contactService = new ContactService();
             chatService = new ChatService();
         }
 
@@ -24,9 +24,9 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <returns>List of contacts</returns>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public List<Contact> Get()
         {
-            return new string[] { "value1", "value2" };
+            return contactService.GetAllContacts();
         }
 
         // GET api/<ContactsController>/5
@@ -50,8 +50,8 @@ namespace WebAPI.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] RequestCreationOfNewContact request)
         {
-            userService.CreateContact(request.Id, request.Name, request.Server);
-            return StatusCode(200, "hello request" + request.Id);
+            contactService.CreateContact(request.Id, request.Name, request.Server);
+            return StatusCode(200, "hello request " + request.Id);
         }
 
         // PUT api/<ContactsController>/5
@@ -79,7 +79,7 @@ namespace WebAPI.Controllers
         [Route("/api/contacts/{id}")]
         public IActionResult ReturnContact(string id)
         {
-            return Ok(userService.Get(id));
+            return Ok(contactService.Get(id));
         }
     }
 }
