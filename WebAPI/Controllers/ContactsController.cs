@@ -11,6 +11,7 @@ namespace WebAPI.Controllers
     public class ContactsController : ControllerBase
     {
         private IContactService contactService;
+
         public ContactsController()
         {
             contactService = new ContactService();
@@ -39,9 +40,9 @@ namespace WebAPI.Controllers
             return contactService.Get(id);
         }
 
-        // ------> GET api/<ContactsController>/:id/messages ////////////////////////////////////////////////////// <--------
+        // GET api/<ContactsController>/:id/messages
         /*[HttpGet("{id}/messages")]
-        public MessageList Get(string id, string name)
+        public MessageList Get(string id)
         {
             //
         }*/
@@ -53,7 +54,7 @@ namespace WebAPI.Controllers
         /// <param name="id1"></param>
         /// <param name="id2"></param>
         /// <returns>Message</returns>
-        [HttpGet("{id}/messages/{id}")]
+        [HttpGet("{id1}/messages/{id2}")]
         public Message Get(string id1, string id2)
         {
             return null;
@@ -100,7 +101,7 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="id1"></param>
         /// <param name="id2"></param>
-        [HttpPut("{id}/messages/{id}")]
+        [HttpPut("{id1}/messages/{id2}")]
         public void Put([FromBody] string id1, string id2)
         {
             //
@@ -123,7 +124,7 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="id1"></param>
         /// <param name="id2"></param>
-        [HttpDelete("{id}/messages/{id}")]
+        [HttpDelete("{id1}/messages/{id2}")]
         public void Delete(string id1, string id2)
         {
 

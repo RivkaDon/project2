@@ -4,14 +4,11 @@ namespace WebAPI.Services
 {
     public interface IChatService
     {
-        public void CreateUser(string name, string password);
-        
-        public User Get(string id);
+        /*public Chat Get(string id);
 
-        List<User> GetAllUsers();
-
+        ChatList GetAllChats();
         public void Edit(string id, string name);
-        
         public void Delete(string id);
+        public void CreateMessage(string name, string password);*/
     }
 }
