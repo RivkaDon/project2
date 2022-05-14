@@ -11,11 +11,9 @@ namespace WebAPI.Controllers
     public class ContactsController : ControllerBase
     {
         private IContactService contactService;
-        private IChatService chatService;
         public ContactsController()
         {
             contactService = new ContactService();
-            chatService = new ChatService();
         }
 
         // GET: api/<ContactsController>
@@ -29,7 +27,7 @@ namespace WebAPI.Controllers
             return contactService.GetAllContacts();
         }
 
-        // GET api/<ContactsController>/{id}
+        // GET api/<ContactsController>/:id
         /// <summary>
         /// Returns the contact with given id.
         /// </summary>
@@ -39,6 +37,27 @@ namespace WebAPI.Controllers
         public Contact Get(string id)
         {
             return contactService.Get(id);
+        }
+
+        // ------> GET api/<ContactsController>/:id/messages ////////////////////////////////////////////////////// <--------
+        /*[HttpGet("{id}/messages")]
+        public MessageList Get(string id, string name)
+        {
+            //
+        }*/
+
+        // GET api/<ContactsController>/:id/messages/:id
+        /// <summary>
+        /// Returns a certain message sent in a chat with a certain contact.
+        /// </summary>
+        /// <param name="id1"></param>
+        /// <param name="id2"></param>
+        /// <returns>Message</returns>
+        [HttpGet("{id}/messages/{id}")]
+        public Message Get(string id1, string id2)
+        {
+            return null;
+            //
         }
 
         // POST api/<ContactsController>
@@ -52,19 +71,42 @@ namespace WebAPI.Controllers
             contactService.CreateContact(request.Id, request.Name, request.Server);
         }
 
-        // PUT api/<ContactsController>/{id}
+        // POST api/<ContactsController>/:id/messages
         /// <summary>
-        /// Adding a certain contact, by id.
+        /// Creates new message.
+        /// </summary>
+        /// <param name="value"></param>
+        [HttpPost("{id}/messages")]
+        public void Post([FromBody] string id)
+        {
+            //
+        }
+
+        // PUT api/<ContactsController>/:id
+        /// <summary>
+        /// Updates a certain contact, by id.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="value"></param>
         [HttpPut("{id}")]
         public void Put([FromBody] RequestEditContact request)
         {
-            contactService.Edit(request.Id, request.Name, request.Server, request.Last, request.LastDate);
+            contactService.Edit(request.Id, request.Name, request.Server);
         }
 
-        // DELETE api/<ContactsController>/{id}
+        // POST api/<ContactsController>/:id/messages/:id
+        /// <summary>
+        /// Updates a certain message sent in a chat with a certain contact.
+        /// </summary>
+        /// <param name="id1"></param>
+        /// <param name="id2"></param>
+        [HttpPut("{id}/messages/{id}")]
+        public void Put([FromBody] string id1, string id2)
+        {
+            //
+        }
+
+        // DELETE api/<ContactsController>/:id
         /// <summary>
         /// Deletes a certain contact, by id.
         /// </summary>
@@ -72,6 +114,19 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(string id)
         {
+            contactService.Delete(id);
+        }
+
+        // DELETE api/<ContactsController>/:id/messages/:id
+        /// <summary>
+        /// Deletes a certain message sent in a chat with a certain contact.
+        /// </summary>
+        /// <param name="id1"></param>
+        /// <param name="id2"></param>
+        [HttpDelete("{id}/messages/{id}")]
+        public void Delete(string id1, string id2)
+        {
+
         }
     }
 }

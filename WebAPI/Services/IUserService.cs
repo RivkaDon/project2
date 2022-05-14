@@ -8,6 +8,7 @@ namespace WebAPI.Services
         public User Get(string id);
         public void Edit(string id, string name = null, string password = null);
         public void Delete(string id);
+        public void DeleteContact(Contact contact);
         public void CreateUser(string id, string name, string password);
         public void CreateContact(string id, string name, string server);
     }

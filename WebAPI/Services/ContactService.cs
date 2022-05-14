@@ -47,7 +47,8 @@ namespace WebAPI.Services
         {
             if (Exists(id))
             {
-
+                Contact contact = Get(id);
+                userService.DeleteContact(contact);
             }
         }
 
