@@ -10,6 +10,7 @@ namespace WebAPI.Data
 {
     public class WebAPIContext : DbContext
     {
+        public WebAPIContext() { }
         public WebAPIContext (DbContextOptions<WebAPIContext> options)
             : base(options)
         {
