@@ -56,7 +56,7 @@ namespace WebAPI.Services
 
         public void CreateContact(string id, string name, string server)
         {
-            if (!Exists(id)) return;
+            if (Exists(id)) return;
             User user = Get(Global.Id);
             if (user != null)
             {

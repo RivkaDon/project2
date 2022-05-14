@@ -70,7 +70,7 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         [HttpDelete("{id}")]
-        public void Delete(str id)
+        public void Delete(string id)
         {
         }
     }
