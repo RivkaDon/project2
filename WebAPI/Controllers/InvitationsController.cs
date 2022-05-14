@@ -8,35 +8,14 @@ namespace WebAPI.Controllers
     [ApiController]
     public class InvitationsController : ControllerBase
     {
-        // GET: api/<InvitationsController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<InvitationsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
 
         // POST api/<InvitationsController>
+        /// <summary>
+        /// Sends (?) an invitation to join a new chat.
+        /// </summary>
+        /// <param name="value"></param>
         [HttpPost]
         public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<InvitationsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<InvitationsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
         {
         }
     }
