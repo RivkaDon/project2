@@ -5,28 +5,55 @@ namespace WebAPI.Services
     public class ContactService : IContactService
     {
         private IUserService userService = new UserService();
-        /*public static ContactList contacts = new ContactList();*/
+        private static User user;
+
+        public ContactService()
+        {
+            user = userService.Get(Global.Id);
+        }
 
         public List<Contact> GetAllContacts()
         {
-            User user = userService.Get(Global.Id);
+            if (user == null) return null;
             return user.Contacts.Contacts;
         }
+
+        public bool Exists(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return false;
+
+            List<Contact> contacts = GetAllContacts();
+            foreach (var contact in contacts)
+            {
+                if (contact.Id == id) return true;
+            }
+            return false;
+        }
+
         public Contact Get(string id)
         {
-            throw new NotImplementedException();
+            if (!Exists(id)) return null;
+            return GetAllContacts().Find(e => e.Id == id);
         }
-        public void Edit(string id, string name)
+        public void Edit(string id, string name = null, string last = null, DateTime? lastDate = null)
         {
-            throw new NotImplementedException();
+            if (Exists(id))
+            {
+                Contact contact = Get(id);
+                user.Contacts.Edit(contact, name, last, lastDate);
+            }
         }
         public void Delete(string id)
         {
-            throw new NotImplementedException();
+            if (Exists(id))
+            {
+
+            }
         }
 
         public void CreateContact(string id, string name, string server)
         {
+            if (Exists(id)) return;
             /*contacts.Add(new Contact { Id = id, Name = name, Server = server });*/
             userService.CreateContact(id, name, server);
         }
