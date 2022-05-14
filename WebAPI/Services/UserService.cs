@@ -5,7 +5,7 @@ namespace WebAPI.Services
     public class UserService : IUserService
     {
 
-        public static UserList users = new UserList();
+        private static UserList users = new UserList();
 
         public List<User> GetAllUsers()
         {
