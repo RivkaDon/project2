@@ -18,6 +18,11 @@
             get { return users; }
         }
 
+        public ContactList GetContactList(User user)
+        {
+            return user.Contacts;
+        }
+
         public void Add(User user)
         {
             if (user == null) return;
@@ -37,6 +42,18 @@
                 if (name != null) users[index].Name = name;
                 if (password != null) users[index].Password = password;
             }
+        }
+
+        public void DeleteContact(User user, Contact contact)
+        {
+            if (user == null || contact == null) return;
+            if (!users.Contains(user)) return;
+
+            ContactList contactList = GetContactList(user);
+            if (contactList == null) return;
+            if (!contactList.Contacts.Contains(contact)) return;
+
+            contactList.Remove(contact);
         }
     }
 

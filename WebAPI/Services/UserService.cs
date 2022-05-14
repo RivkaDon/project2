@@ -46,12 +46,20 @@ namespace WebAPI.Services
             }
         }
 
+        public void DeleteContact(Contact contact)
+        {
+            User user = Get(Global.Id);
+            users.DeleteContact(user, contact);
+        }
+
         public void CreateUser(string id, string name, string password)
         {
             if (Exists(id)) return;
             /*var len = GetAllUsers().Count();
             string id = len.ToString();*/
-            users.Add(new User { Id = id, Name = name, Password = password, Contacts = new ContactList() });
+            users.Add(new User {
+                Id = id, Name = name, Password = password, Contacts = new ContactList()
+            });
         }
 
         public void CreateContact(string id, string name, string server)
@@ -64,7 +72,9 @@ namespace WebAPI.Services
                 {
                     user.Contacts = new ContactList();
                 }*/
-                user.Contacts.Add(new Contact() { Id = id, Name = name, Server = server, Last = "", LastDate = null });
+                user.Contacts.Add(new Contact() {
+                    Id = id, Name = name, Server = server, Messages = new MessageList(), Last = "", LastDate = null
+                });
             }
             
         }
