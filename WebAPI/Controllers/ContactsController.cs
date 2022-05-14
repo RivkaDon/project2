@@ -19,6 +19,10 @@ namespace WebAPI.Controllers
         }
 
         // GET: api/<ContactsController>
+        /// <summary>
+        /// Returns all contacts.
+        /// </summary>
+        /// <returns>List of contacts</returns>
         [HttpGet]
         public IEnumerable<string> Get()
         {
@@ -26,6 +30,11 @@ namespace WebAPI.Controllers
         }
 
         // GET api/<ContactsController>/5
+        /// <summary>
+        /// Returns the contact with given id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Contact</returns>
         [HttpGet("{id}")]
         public string Get(int id)
         {
@@ -33,6 +42,11 @@ namespace WebAPI.Controllers
         }
 
         // POST api/<ContactsController>
+        /// <summary>
+        /// Creates new contact.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! change this</returns>
         [HttpPost]
         public IActionResult Post([FromBody] RequestCreationOfNewContact request)
         {
@@ -41,12 +55,21 @@ namespace WebAPI.Controllers
         }
 
         // PUT api/<ContactsController>/5
+        /// <summary>
+        /// Adding a certain contact, by id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="value"></param>
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
         // DELETE api/<ContactsController>/5
+        /// <summary>
+        /// Deletes a certain contact, by id.
+        /// </summary>
+        /// <param name="id"></param>
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

@@ -8,35 +8,14 @@ namespace WebAPI.Controllers
     [ApiController]
     public class TransferController : ControllerBase
     {
-        // GET: api/<TransferController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<TransferController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
 
         // POST api/<TransferController>
+        /// <summary>
+        /// Transfers a new message to one of the users.
+        /// </summary>
+        /// <param name="value"></param>
         [HttpPost]
         public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<TransferController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<TransferController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
         {
         }
     }
