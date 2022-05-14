@@ -29,16 +29,16 @@ namespace WebAPI.Controllers
             return contactService.GetAllContacts();
         }
 
-        // GET api/<ContactsController>/5
+        // GET api/<ContactsController>/{id}
         /// <summary>
         /// Returns the contact with given id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Contact</returns>
         [HttpGet("{id}")]
-        public string Get(int id)
+        public Contact Get(string id)
         {
-            return "value";
+            return contactService.Get(id);
         }
 
         // POST api/<ContactsController>
@@ -46,40 +46,32 @@ namespace WebAPI.Controllers
         /// Creates new contact.
         /// </summary>
         /// <param name="request"></param>
-        /// <returns>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! change this</returns>
         [HttpPost]
-        public IActionResult Post([FromBody] RequestCreationOfNewContact request)
+        public void Post([FromBody] RequestCreationOfNewContact request)
         {
             contactService.CreateContact(request.Id, request.Name, request.Server);
-            return StatusCode(200, "hello request " + request.Id);
         }
 
-        // PUT api/<ContactsController>/5
+        // PUT api/<ContactsController>/{id}
         /// <summary>
         /// Adding a certain contact, by id.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="value"></param>
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(string id, [FromBody] string value)
         {
+
         }
 
-        // DELETE api/<ContactsController>/5
+        // DELETE api/<ContactsController>/{id}
         /// <summary>
         /// Deletes a certain contact, by id.
         /// </summary>
         /// <param name="id"></param>
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(str id)
         {
-        }
-        
-        [HttpGet]
-        [Route("/api/contacts/{id}")]
-        public IActionResult ReturnContact(string id)
-        {
-            return Ok(contactService.Get(id));
         }
     }
 }

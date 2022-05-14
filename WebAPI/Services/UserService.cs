@@ -12,41 +12,58 @@ namespace WebAPI.Services
             return users.Users;
         }
 
-        public User Get(string id)
+        public bool Exists(string id)
         {
-            return users.Users.Find(e => e.Id == id);
+            if (string.IsNullOrEmpty(id)) return false;
+
+            foreach (var user in users.Users)
+            {
+                if (user.Id == id) return true;
+            }
+            return false;
         }
 
-        public void Edit(string id, string name)
+        public User Get(string id)
         {
-            User userForEdit = Get(id);
-            userForEdit.Name = name;
+            if (!Exists(id)) return null;
+            return GetAllUsers().Find(e => e.Id == id);
+        }
 
-            
+        public void Edit(string id, string name = null, string password = null)
+        {
+            if (Exists(id))
+            {
+                User user = Get(id);
+                users.Edit(user, name, password);
+            }
         }
 
         public void Delete(string id)
         {
-            users.Users.Remove(Get(id));
-
+            if (Exists(id))
+            {
+                GetAllUsers().Remove(Get(id));
+            }
         }
 
-        public void CreateUser(string name, string password)
+        public void CreateUser(string id, string name, string password)
         {
-            var len = users.Users.Count();
-            string id = len.ToString();
-            users.Add(new User { Id = id, Name = name, Password = password, Contacts = null });
+            if (Exists(id)) return;
+            /*var len = GetAllUsers().Count();
+            string id = len.ToString();*/
+            users.Add(new User { Id = id, Name = name, Password = password, Contacts = new ContactList() });
         }
 
         public void CreateContact(string id, string name, string server)
         {
+            if (!Exists(id)) return;
             User user = Get(Global.Id);
             if (user != null)
             {
-                if (user.Contacts == null)
+                /*if (user.Contacts == null)
                 {
                     user.Contacts = new ContactList();
-                }
+                }*/
                 user.Contacts.Add(new Contact() { Id = id, Name = name, Server = server, Last = "", LastDate = null });
             }
             
