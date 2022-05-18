@@ -12,10 +12,10 @@ namespace WebAPI.Services
             user = userService.Get(Global.Id);
         }
 
-        public User User()
+        /*public User User()
         {
             return user;
-        }
+        }*/
 
         public List<Contact> GetAllContacts()
         {
@@ -45,17 +45,17 @@ namespace WebAPI.Services
         }
         public void Edit(string id, string name = null, string server = null, string last = null, DateTime? lastDate = null)
         {
-            if (Exists(id))
+            Contact contact = Get(id);
+            if (contact != null)
             {
-                Contact contact = Get(id);
                 user.Contacts.Edit(contact, name, server, last, lastDate);
             }
         }
         public void Delete(string id)
         {
-            if (Exists(id))
+            Contact contact = Get(id);
+            if (contact != null)
             {
-                Contact contact = Get(id);
                 userService.DeleteContact(contact);
             }
         }
@@ -67,9 +67,23 @@ namespace WebAPI.Services
             userService.CreateContact(id, name, server);
         }
 
-        public void DeleteMessage(Contact contact, Message message)
+        public void UpdateLastDate(string id, List<Message> messages)
         {
-            contact.Messages.Remove(message);
+            DateTime? created = messages[0].Created;
+            string last = messages[0].Content;
+            Contact contact = Get(id);
+
+            foreach (Message m in messages)
+            {
+                if (m.Created.Value < created.Value)
+                {
+                    created = m.Created.Value;
+                    last = m.Content;
+                }
+            }
+
+            contact.Last = last;
+            contact.LastDate = created;
         }
     }
 }

@@ -10,6 +10,8 @@ namespace WebAPI.Services
         public void Delete(string id);
         public void CreateUser(string id, string name, string password);
         public void CreateContact(string id, string name, string server);
+        public void CreateChat(string id, string name, string server);
         public void DeleteContact(Contact contact);
+        public void DeleteChat(Chat chat);
     }
 }

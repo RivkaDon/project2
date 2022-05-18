@@ -2,8 +2,9 @@
 {
     public class Chat
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public string Id { get; set; }
+        /*public string ContactId { get; set; }*/
+        public Contact Contact { get; set; }
         public MessageList Messages { get; set; }
     }
 }
