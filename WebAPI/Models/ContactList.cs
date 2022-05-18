@@ -11,6 +11,13 @@
             get { return contacts; }
         }
 
+        public MessageList GetMessageList(Contact contact)
+        {
+            if (contact == null) return null;
+            if (!contacts.Contains(contact)) return null;
+            return contact.Messages;
+        }
+
         public void Add(Contact contact)
         {
             if (contact == null) return;
@@ -41,6 +48,17 @@
             {
                 contacts.Remove(contact);
             }
+        }
+
+        public void DeleteMessage(Contact contact, Message message)
+        {
+            if (message == null) return;
+
+            MessageList messageList = GetMessageList(contact);
+            if (messageList == null) return;
+            if (!messageList.Messages.Contains(message)) return;
+
+            messageList.Remove(message);
         }
     }
 }

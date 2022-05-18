@@ -4,7 +4,6 @@ namespace WebAPI.Services
 {
     public class UserService : IUserService
     {
-
         private static UserList users = new UserList();
 
         public List<User> GetAllUsers()
@@ -46,12 +45,6 @@ namespace WebAPI.Services
             }
         }
 
-        public void DeleteContact(Contact contact)
-        {
-            User user = Get(Global.Id);
-            users.DeleteContact(user, contact);
-        }
-
         public void CreateUser(string id, string name, string password)
         {
             if (Exists(id)) return;
@@ -76,7 +69,12 @@ namespace WebAPI.Services
                     Id = id, Name = name, Server = server, Messages = new MessageList(), Last = "", LastDate = null
                 });
             }
-            
+        }
+
+        public void DeleteContact(Contact contact)
+        {
+            User user = Get(Global.Id);
+            users.DeleteContact(user, contact);
         }
     }
 }

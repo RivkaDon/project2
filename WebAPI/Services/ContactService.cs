@@ -12,9 +12,15 @@ namespace WebAPI.Services
             user = userService.Get(Global.Id);
         }
 
+        public User User()
+        {
+            return user;
+        }
+
         public List<Contact> GetAllContacts()
         {
             if (user == null) return null;
+            if (user.Contacts == null) return null;
             return user.Contacts.Contacts;
         }
 
@@ -23,6 +29,8 @@ namespace WebAPI.Services
             if (string.IsNullOrEmpty(id)) return false;
 
             List<Contact> contacts = GetAllContacts();
+            if (contacts == null) return false;
+
             foreach (var contact in contacts)
             {
                 if (contact.Id == id) return true;
@@ -57,6 +65,11 @@ namespace WebAPI.Services
             if (Exists(id)) return;
             /*contacts.Add(new Contact { Id = id, Name = name, Server = server });*/
             userService.CreateContact(id, name, server);
+        }
+
+        public void DeleteMessage(Contact contact, Message message)
+        {
+            contact.Messages.Remove(message);
         }
     }
 }

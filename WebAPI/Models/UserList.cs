@@ -20,6 +20,8 @@
 
         public ContactList GetContactList(User user)
         {
+            if (user == null) return null;
+            if (!users.Contains(user)) return null;
             return user.Contacts;
         }
 
@@ -44,10 +46,11 @@
             }
         }
 
+        // maybe add remove
+
         public void DeleteContact(User user, Contact contact)
         {
-            if (user == null || contact == null) return;
-            if (!users.Contains(user)) return;
+            if (contact == null) return;
 
             ContactList contactList = GetContactList(user);
             if (contactList == null) return;

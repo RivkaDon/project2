@@ -1,6 +1,6 @@
 ﻿namespace WebAPI.Models
 {
-    public class Contact
+    public class Contact : Person // Chat
     {
         public string Id { get; set; }
         public string Name { get; set; }
