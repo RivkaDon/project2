@@ -4,42 +4,25 @@ namespace WebAPI.Services
 {
     public class MessageService : IMessageService
     {
-        private IContactService contactService = new ContactService();
-        private Contact contact;
+        private IChatService chatService = new ChatService();
+        private Chat chat;
         /*private List<Message> messages = new List<Message>();*/
 
-        public MessageService(Contact contact)
+        public MessageService(Chat chat)
         {
-            this.contact = contact;
+            this.chat = chat;
         }
-
-        /// <summary>
-        /// Returns if a message exists in a chat with a certain contact.
-        /// </summary>
-        /// <param name="id1">Contact</param>
-        /// <param name="id2">Message</param>
-        /// <returns>bool</returns>
-        /*public bool Exists(string id1, string id2)
-        {
-            if (string.IsNullOrEmpty(id1) || string.IsNullOrEmpty(id2)) return false;
-
-            Contact contact = contactService.Get(id1);
-            if (contact == null) return false; // Checking if the contact exists.
-            if (contact.Messages == null) return false;
-
-            List<Message> messages = GetAllMessages(contact);
-            foreach (Message message in messages)
-            {
-                if (message.Id == id1) return true;
-            }
-            return false;
-        }*/
         
         public List<Message> GetAllMessages()
         {
-            if (contact == null) return null;
-            if (contact.Messages == null) return null;
-            return contact.Messages.Messages;
+            if (chat == null) return null;
+            if (chat.Messages == null) return null;
+            return chat.Messages.Messages;
+        }
+
+        public int Count()
+        {
+            return GetAllMessages().Count;
         }
 
         public bool Exists(string id)
@@ -67,7 +50,13 @@ namespace WebAPI.Services
             if (Exists(id))
             {
                 Message message = Get(id);
-                contact.Messages.Edit(message, sent, content, created);
+                chat.Messages.Edit(message, sent, content, created);
+
+                if (sent)
+                {
+                    chat.Contact.Last = message.Content;
+                    chat.Contact.LastDate = message.Created;
+                }
             }
         }
 
@@ -76,11 +65,11 @@ namespace WebAPI.Services
             if (Exists(id))
             {
                 Message message = Get(id);
-                contactService.DeleteMessage(contact, message);
+                chatService.DeleteMessage(chat, message);
             }
         }
 
-        public void SendMessage(string content)
+        public void SendMessage(string content, bool sent)
         {
             if (content != null)
             {
@@ -90,9 +79,15 @@ namespace WebAPI.Services
                 message.Id = len.ToString();
                 message.Created = DateTime.Now;
                 message.Content = content;
-                message.Sent = true;
+                message.Sent = sent;
 
-                contact.Messages.Add(message);
+                chat.Messages.Add(message);
+
+                if (sent)
+                {
+                    chat.Contact.Last = message.Content;
+                    chat.Contact.LastDate = message.Created;
+                }
             }
         }
     }
