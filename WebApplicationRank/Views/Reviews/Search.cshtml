@@ -2,9 +2,6 @@
 
 @{
     ViewData["Title"] = "Message App";
-    var sum = 0;
-    var count = 0;
-    var average = 0;
 }
 
 <style>
@@ -13,18 +10,16 @@
     }
 </style>
 <dev>Average Review Score: </dev>
-@foreach (var item in Model)
-{
-    sum = item.Score + sum;
-    count++;
-}
-@{average = sum/count;}
-<dev>@average</dev>
 <h1>Existing Reviews:</h1>
 
 <p>
     <a asp-action="Create">Create New Review</a>
 </p>
+
+<form asp-action="Search">
+    <input name="query"/>
+    <input type="submit" value="Search" />
+</form>
 
 <table class="table">
     <thead>
