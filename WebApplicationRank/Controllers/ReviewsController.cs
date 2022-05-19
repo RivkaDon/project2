@@ -27,6 +27,22 @@ namespace WebApplicationRank.Controllers
                           Problem("Entity set 'WebApplicationRankContext.Review'  is null.");
         }
 
+        public async Task<IActionResult> Search()
+        {
+            return _context.Review != null ?
+                        View(await _context.Review.ToListAsync()) :
+                        Problem("Entity set 'WebApplicationRankContext.Review'  is null.");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Search(string query)
+        {
+            var q = from Review in _context.Review
+                    where Review.Name.Contains(query)
+                    select Review;
+            return View(await q.ToListAsync());
+        }
+
         // GET: Reviews/Details/5
         public async Task<IActionResult> Details(string id)
         {
