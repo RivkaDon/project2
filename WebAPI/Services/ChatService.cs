@@ -4,14 +4,21 @@ namespace WebAPI.Services
 {
     public class ChatService : IChatService
     {
-        private IUserService userService = new UserService();
-        private static User user;
+        private IUserService userService;
+        private User user;
 
         /*private static ChatList chats = new ChatList();*/
 
         public ChatService()
         {
+            userService = new UserService();
             user = userService.Get(Global.Id);
+        }
+
+        public ChatService(string id)
+        {
+            userService = new UserService(id);
+            user = userService.Get(id);
         }
 
         public List<Chat> GetAllChats()
@@ -69,6 +76,7 @@ namespace WebAPI.Services
         public void CreateChat(string id, string name, string server)
         {
             if (Exists(id)) return;
+            if (id == user.Id) return;
             userService.CreateChat(id, name, server);
         }
 
@@ -87,7 +95,8 @@ namespace WebAPI.Services
         {
             if (message == null) return;
 
-            MessageList messageList = GetMessageList(chat);
+            //MessageList messageList = GetMessageList(chat);
+            MessageList messageList = chat.Messages;
             if (messageList == null) return;
             if (!messageList.Messages.Contains(message)) return;
 

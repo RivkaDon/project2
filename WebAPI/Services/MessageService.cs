@@ -4,13 +4,22 @@ namespace WebAPI.Services
 {
     public class MessageService : IMessageService
     {
-        private IChatService chatService = new ChatService();
+        private IUserService userService;
+        private IChatService chatService;
         private Chat chat;
-        /*private List<Message> messages = new List<Message>();*/
 
-        public MessageService(Chat chat)
+        public MessageService(Chat c)
         {
-            this.chat = chat;
+            userService = new UserService();
+            chatService = new ChatService(c.Id);
+            chat = c;
+        }
+
+        public MessageService(Chat c, string id)
+        {
+            userService = new UserService(id);
+            chatService = new ChatService(c.Id);
+            chat = c;
         }
         
         public List<Message> GetAllMessages()
@@ -23,6 +32,14 @@ namespace WebAPI.Services
         public int Count()
         {
             return GetAllMessages().Count;
+        }
+
+        public string lastId()
+        {
+            List<Message> messages = GetAllMessages();
+            int len = messages.Count;
+            string lastId = messages[len - 1].Id;
+            return lastId + 1;
         }
 
         public bool Exists(string id)
@@ -47,11 +64,12 @@ namespace WebAPI.Services
 
         public void Edit(string id, bool sent, string content = null, DateTime? created = null)
         {
-            if (Exists(id))
+            Message message = Get(id);
+            if (message != null)
             {
-                Message message = Get(id);
                 chat.Messages.Edit(message, sent, content, created);
 
+                // Checking is the message was sent by the user (and not to the user).
                 if (sent)
                 {
                     chat.Contact.Last = message.Content;
@@ -62,12 +80,22 @@ namespace WebAPI.Services
 
         public void Delete(string id)
         {
-            if (Exists(id))
+            Message message = Get(id);
+            if (message != null)
             {
-                Message message = Get(id);
                 chatService.DeleteMessage(chat, message);
             }
         }
+
+        /*public void sendTo(string id, string content)
+        {
+            User user = userService.Get(id);
+            if (user == null) return; // Checking if the user exists
+
+            userService.updateUser(id, chat.Contact, content, DateTime.Now);
+
+            SendMessage(content, false);
+        }*/
 
         public void SendMessage(string content, bool sent)
         {
@@ -83,6 +111,7 @@ namespace WebAPI.Services
 
                 chat.Messages.Add(message);
 
+                // Checking is the message was sent by the user (and not to the user).
                 if (sent)
                 {
                     chat.Contact.Last = message.Content;

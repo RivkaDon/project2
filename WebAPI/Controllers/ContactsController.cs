@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using WebAPI.Models;
 using WebAPI.Services;
 
@@ -8,6 +10,7 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class ContactsController : ControllerBase
     {
         private IContactService contactService;
@@ -20,13 +23,17 @@ namespace WebAPI.Controllers
             chatService = new ChatService();
         }
 
+        /*private void setChatService(string id)
+        {
+            chatService = new ChatService(id);
+        }*/
+
         private void setMessageService(string id)
         {
             Chat c = chatService.Get(id);
             messageService = new MessageService(c);
         }
 
-        // GET: api/<ContactsController>
         /// <summary>
         /// Returns all contacts.
         /// </summary>
@@ -37,7 +44,6 @@ namespace WebAPI.Controllers
             return contactService.GetAllContacts();
         }
 
-        // GET api/<ContactsController>/:id
         /// <summary>
         /// Returns the contact with given id.
         /// </summary>
@@ -46,10 +52,17 @@ namespace WebAPI.Controllers
         [HttpGet("{id}")]
         public Contact Get(string id)
         {
-            return contactService.Get(id);
+            Contact contact = contactService.Get(id);
+            if (contact == null)
+            {
+                // Response.StatusCode = 404;
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return null;
+                //return new HttpNotFoundResult();
+            }
+            return contact;
         }
 
-        // GET api/<ContactsController>/:id/messages
         /// <summary>
         /// Returns all messages.
         /// </summary>
@@ -62,7 +75,6 @@ namespace WebAPI.Controllers
             return messageService.GetAllMessages();
         }
 
-        // GET api/<ContactsController>/:id/messages/:id
         /// <summary>
         /// Returns a certain message sent in a chat with a certain contact.
         /// </summary>
@@ -76,7 +88,6 @@ namespace WebAPI.Controllers
             return messageService.Get(id2);
         }
 
-        // POST api/<ContactsController>
         /// <summary>
         /// Creates new contact.
         /// </summary>
@@ -84,10 +95,10 @@ namespace WebAPI.Controllers
         [HttpPost]
         public void Post([FromBody] RequestCreationOfNewContact request)
         {
+            // setChatService(Global.Id);
             chatService.CreateChat(request.Id, request.Name, request.Server);
         }
 
-        // POST api/<ContactsController>/:id/messages
         /// <summary>
         /// Creates new message.
         /// </summary>
@@ -99,7 +110,6 @@ namespace WebAPI.Controllers
             messageService.SendMessage(request.Content, true);
         }
 
-        // PUT api/<ContactsController>/:id
         /// <summary>
         /// Updates a certain contact, by id.
         /// </summary>
@@ -110,10 +120,10 @@ namespace WebAPI.Controllers
         {
             contactService.Edit(id, request.Name, request.Server);
             Contact contact = contactService.Get(id);
+            // setChatService(Global.Id);
             chatService.Edit(id, contact);
         }
 
-        // POST api/<ContactsController>/:id/messages/:id
         /// <summary>
         /// Updates a certain message sent in a chat with a certain contact.
         /// </summary>
@@ -128,7 +138,6 @@ namespace WebAPI.Controllers
             
         }
 
-        // DELETE api/<ContactsController>/:id
         /// <summary>
         /// Deletes a certain contact, by id.
         /// </summary>
@@ -136,10 +145,10 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(string id)
         {
+            // setChatService(Global.Id);
             chatService.Delete(id);
         }
 
-        // DELETE api/<ContactsController>/:id/messages/:id
         /// <summary>
         /// Deletes a certain message sent in a chat with a certain contact.
         /// </summary>

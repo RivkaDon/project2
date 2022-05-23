@@ -9,32 +9,52 @@ using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class UsersController : Controller
     {
         public IConfiguration configuration;
+        private IUserService userService = new UserService();
 
         public UsersController(IConfiguration config)
         {
             configuration = config; // allows to get to appsettings.json (which is a configuration file)
         }
 
+        private bool validate(string id, string password)
+        {
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(password)) return false;
+
+            User user = userService.Get(id);
+            if (user == null) return false;
+
+            return user.Password == password;
+        }
+
         // POST: UsersController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Post(string username, string password)
+        //[ValidateAntiForgeryToken]
+        public IActionResult Post(string id, string password)
         {
-            // check if the user exists and if this is his or hers password.
-            if (true)
+            if (validate(id, password)) // Checking if this id exists, and if the password is the right password.
             {
                 var claims = new[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, configuration["JWT:Subject"]),
+                    new Claim(JwtRegisteredClaimNames.Sub, configuration["JWTParams:Subject"]),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                    new Claim("UserId", username)
+                    new Claim("UserId", id),
+                    new Claim("UserPassword", password)
                 };
 
-                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:SecretKey"]));
+                /*var claims = new List<Claim>();
+                claims.Add(new Claim(JwtRegisteredClaimNames.Sub, configuration["JWT:Subject"]));
+                claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+                claims.Add(new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()));
+                claims.Add(new Claim("UserId", id));*/
+                
+
+                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTParams:SecretKey"]));
                 var mac = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
                 var token = new JwtSecurityToken(
                     configuration["JWTParams:Issuer"],
@@ -43,6 +63,9 @@ namespace WebAPI.Controllers
                     expires: DateTime.UtcNow.AddMinutes(20),
                     signingCredentials: mac);
                 return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+            } else
+            {
+                return BadRequest();
             }
         }
     }

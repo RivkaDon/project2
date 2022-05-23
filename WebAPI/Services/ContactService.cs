@@ -4,12 +4,19 @@ namespace WebAPI.Services
 {
     public class ContactService : IContactService
     {
-        private IUserService userService = new UserService();
-        private static User user;
+        private IUserService userService;
+        private User user;
 
         public ContactService()
         {
+            userService = new UserService();
             user = userService.Get(Global.Id);
+        }
+
+        public ContactService(string id)
+        {
+            userService = new UserService(id);
+            user = userService.Get(id);
         }
 
         /*public User User()
