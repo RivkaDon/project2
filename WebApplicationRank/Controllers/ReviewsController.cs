@@ -76,6 +76,7 @@ namespace WebApplicationRank.Controllers
         {
             if (ModelState.IsValid)
             {
+                review.DateTime = DateTime.Now;
                 _context.Add(review);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
