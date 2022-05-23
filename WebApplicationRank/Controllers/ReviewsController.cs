@@ -40,7 +40,9 @@ namespace WebApplicationRank.Controllers
             var q = from Review in _context.Review
                     where Review.Name.Contains(query)
                     select Review;
-            return View(await q.ToListAsync());
+            if (q.Count() > 0)
+            { return View(await q.ToListAsync()); }
+            return View();
         }
 
         // GET: Reviews/Details/5
@@ -79,7 +81,7 @@ namespace WebApplicationRank.Controllers
                 review.DateTime = DateTime.Now;
                 _context.Add(review);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Search));
             }
             return View(review);
         }
@@ -116,6 +118,7 @@ namespace WebApplicationRank.Controllers
             {
                 try
                 {
+                    review.DateTime = DateTime.Now;
                     _context.Update(review);
                     await _context.SaveChangesAsync();
                 }
@@ -130,7 +133,7 @@ namespace WebApplicationRank.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Search));
             }
             return View(review);
         }
@@ -169,7 +172,7 @@ namespace WebApplicationRank.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Search));
         }
 
         private bool ReviewExists(string id)
