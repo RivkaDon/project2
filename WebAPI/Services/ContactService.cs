@@ -12,9 +12,15 @@ namespace WebAPI.Services
             user = userService.Get(Global.Id);
         }
 
+        /*public User User()
+        {
+            return user;
+        }*/
+
         public List<Contact> GetAllContacts()
         {
             if (user == null) return null;
+            if (user.Contacts == null) return null;
             return user.Contacts.Contacts;
         }
 
@@ -23,6 +29,8 @@ namespace WebAPI.Services
             if (string.IsNullOrEmpty(id)) return false;
 
             List<Contact> contacts = GetAllContacts();
+            if (contacts == null) return false;
+
             foreach (var contact in contacts)
             {
                 if (contact.Id == id) return true;
@@ -37,17 +45,17 @@ namespace WebAPI.Services
         }
         public void Edit(string id, string name = null, string server = null, string last = null, DateTime? lastDate = null)
         {
-            if (Exists(id))
+            Contact contact = Get(id);
+            if (contact != null)
             {
-                Contact contact = Get(id);
                 user.Contacts.Edit(contact, name, server, last, lastDate);
             }
         }
         public void Delete(string id)
         {
-            if (Exists(id))
+            Contact contact = Get(id);
+            if (contact != null)
             {
-                Contact contact = Get(id);
                 userService.DeleteContact(contact);
             }
         }
@@ -57,6 +65,25 @@ namespace WebAPI.Services
             if (Exists(id)) return;
             /*contacts.Add(new Contact { Id = id, Name = name, Server = server });*/
             userService.CreateContact(id, name, server);
+        }
+
+        public void UpdateLastDate(string id, List<Message> messages)
+        {
+            DateTime? created = messages[0].Created;
+            string last = messages[0].Content;
+            Contact contact = Get(id);
+
+            foreach (Message m in messages)
+            {
+                if (m.Created.Value < created.Value)
+                {
+                    created = m.Created.Value;
+                    last = m.Content;
+                }
+            }
+
+            contact.Last = last;
+            contact.LastDate = created;
         }
     }
 }

@@ -11,17 +11,26 @@ namespace WebAPI.Controllers
     public class ContactsController : ControllerBase
     {
         private IContactService contactService;
+        private IChatService chatService;
+        private IMessageService messageService;
 
         public ContactsController()
         {
             contactService = new ContactService();
+            chatService = new ChatService();
+        }
+
+        private void setMessageService(string id)
+        {
+            Chat c = chatService.Get(id);
+            messageService = new MessageService(c);
         }
 
         // GET: api/<ContactsController>
         /// <summary>
         /// Returns all contacts.
         /// </summary>
-        /// <returns>List of contacts</returns>
+        /// <returns>List<Contact></returns>
         [HttpGet]
         public List<Contact> Get()
         {
@@ -41,11 +50,17 @@ namespace WebAPI.Controllers
         }
 
         // GET api/<ContactsController>/:id/messages
-        /*[HttpGet("{id}/messages")]
-        public MessageList Get(string id)
+        /// <summary>
+        /// Returns all messages.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>List<Message></returns>
+        [HttpGet("{id}/messages")]
+        public List<Message> GetMessages(string id)
         {
-            //
-        }*/
+            setMessageService(id);
+            return messageService.GetAllMessages();
+        }
 
         // GET api/<ContactsController>/:id/messages/:id
         /// <summary>
@@ -57,8 +72,8 @@ namespace WebAPI.Controllers
         [HttpGet("{id1}/messages/{id2}")]
         public Message Get(string id1, string id2)
         {
-            return null;
-            //
+            setMessageService(id1);
+            return messageService.Get(id2);
         }
 
         // POST api/<ContactsController>
@@ -69,7 +84,7 @@ namespace WebAPI.Controllers
         [HttpPost]
         public void Post([FromBody] RequestCreationOfNewContact request)
         {
-            contactService.CreateContact(request.Id, request.Name, request.Server);
+            chatService.CreateChat(request.Id, request.Name, request.Server);
         }
 
         // POST api/<ContactsController>/:id/messages
@@ -78,9 +93,10 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="value"></param>
         [HttpPost("{id}/messages")]
-        public void Post([FromBody] string id)
+        public void Post(string id, [FromBody] RequestCreationOfNewMessage request)
         {
-            //
+            setMessageService(id);
+            messageService.SendMessage(request.Content, true);
         }
 
         // PUT api/<ContactsController>/:id
@@ -88,23 +104,28 @@ namespace WebAPI.Controllers
         /// Updates a certain contact, by id.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="value"></param>
+        /// <param name="request"></param>
         [HttpPut("{id}")]
-        public void Put([FromBody] RequestEditContact request)
+        public void Put(string id, [FromBody] RequestEditContact request)
         {
-            contactService.Edit(request.Id, request.Name, request.Server);
+            contactService.Edit(id, request.Name, request.Server);
+            Contact contact = contactService.Get(id);
+            chatService.Edit(id, contact);
         }
 
         // POST api/<ContactsController>/:id/messages/:id
         /// <summary>
         /// Updates a certain message sent in a chat with a certain contact.
         /// </summary>
-        /// <param name="id1"></param>
-        /// <param name="id2"></param>
+        /// <param name="id1">Contact</param>
+        /// <param name="id2">Message</param>
+        /// <param name="request"></param>
         [HttpPut("{id1}/messages/{id2}")]
-        public void Put([FromBody] string id1, string id2)
+        public void Put(string id1, string id2, [FromBody] RequestEditMessage request)
         {
-            //
+            setMessageService(id1);
+            messageService.Edit(id2, true, request.Content, DateTime.Now);
+            
         }
 
         // DELETE api/<ContactsController>/:id
@@ -115,7 +136,7 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(string id)
         {
-            contactService.Delete(id);
+            chatService.Delete(id);
         }
 
         // DELETE api/<ContactsController>/:id/messages/:id
@@ -127,7 +148,19 @@ namespace WebAPI.Controllers
         [HttpDelete("{id1}/messages/{id2}")]
         public void Delete(string id1, string id2)
         {
+            setMessageService(id1);
+            /*Chat c = chatService.Get(id1);
+            messageService = new MessageService(c);*/
+            messageService.Delete(id2);
 
+            List<Message> messages = messageService.GetAllMessages();
+            if (messages.Count > 0)
+            {
+                /*Contact contact = contactService.Get(id1);*/
+                /*Contact contact = c.Contact;*/
+                contactService.UpdateLastDate(id1, messages);
+
+            }
         }
     }
 }

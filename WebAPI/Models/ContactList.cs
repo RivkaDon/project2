@@ -4,8 +4,6 @@
     {
         private List<Contact> contacts = new List<Contact>();
 
-        public ContactList() { }
-
         public List<Contact> Contacts
         {
             get { return contacts; }

@@ -6,8 +6,8 @@ namespace WebAPI.Services
     {
         public List<Message> GetAllMessages();
         public Message Get(string id);
-        public void Edit(string id, string body, string sentBy, string sentTo, DateTime dateCreated);
+        public void Edit(string id, bool sent, string content = null, DateTime? created = null);
         public void Delete(string id);
-        void SendMessage(string message);
+        public void SendMessage(string content, bool sent);
     }
 }
