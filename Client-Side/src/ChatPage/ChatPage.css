@@ -1,0 +1,52 @@
+.overflow-auto{
+  width: 34%;
+  height: 500px;
+}
+#currentChat{
+    height: 100%;    
+}
+.bi{
+    font-size: xx-large;
+  }
+  .bi-paperclip{
+    font-size: large;
+  }
+  #chatBox{
+    padding: 0%;
+    margin: 0%;
+    height: 90%;
+    width: 100%;
+    position:relative;
+  }
+  
+  .myButton{
+    position:absolute;
+  }
+  .bottomChat{
+    margin: 0%;
+    padding: 0%;
+    width: 86%;
+    position:absolute;
+    left: 6.5%;
+  }
+  #attachButton{
+    left: 0%;
+  }
+  #topStrip{
+    background-color: palevioletred;
+    justify-items: center;
+  }
+  #addButton{
+    font-size: x-large;
+    float: right;
+  }
+  .attach{
+    font-size: x-large;
+  }
+  #sendButton{
+    right: 0%;
+  }
+  #dropdownMenuButton1{
+    left: 0.5%;
+    position: absolute;
+  }

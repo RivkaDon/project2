@@ -1,0 +1,2 @@
+const DonaldTmesseges = [[1,'Make America Great Again!', '4/17/2022, 4:20:56 PM', 'text'],[0,'how are you?', '4/17/2022, 4:22:56 PM', 'text'],[0,'happy-birthday-to-you-traditional-song.mp3', '4/17/2022, 4:23:56 PM', 'sound'],[1,'HowtoExperienceTheWizardingWorldofHarryPotter.mp4', '4/17/2022, 4:20:56 PM', 'vid'],[0,'harryPotter.jpg', '4/17/2022, 4:21:56 PM', 'pic']];
+export default DonaldTmesseges;
