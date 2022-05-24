@@ -1,5 +1,5 @@
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import usersList from './usersList';
 import './RegisterPage.css'
 
@@ -10,18 +10,42 @@ import {
     Route
 } from "react-router-dom";
 
+var flag;
 var userNameInput = "";
+var passwordInput = "";
+
+
 function SignPage2() {
     const [isCorrect, setIsCorrect] = useState(false);
-    function CheckInput(event) {
+    // to send username and password to server
+//     useEffect(()=>{
+//     console.log(userNameInput+','+passwordInput);
+    
+//     const func = async()=> {
+//     await fetch('https://localhost:7104/api/Users',{
+//     method: 'POST',
+//             headers:{'Content-type':'application/json'},
+//             body: {userNameInput, passwordInput}
+        //   }).then(r=>r.json()).then(res=>{
+        //     if(res){
+        //       console.log("yayyyy");
+        //     }
+        //     else {
+        //         console.log("noooo");
+        //     }
+//           });
+//     func()
+// }}, []);
+let componentDidMount;    
+function CheckInput(event) {
         // get values from the inputs.
-        var flag = true;
+        flag = true;
         const form = document.getElementById('form');
         const userName = document.getElementById('userName');
         const password = document.getElementById('password');
 
         userNameInput = userName.value.trim();
-        const passwordInput = password.value.trim();
+        passwordInput = password.value.trim();
 
         if (userNameInput === '') {
             setErrorFor(userName, 'UserName cannot be blank');
@@ -47,8 +71,32 @@ function SignPage2() {
         if (flag === true) {
             setIsCorrect(true);
         }
+        
+         
+        var z = {
+            id: userNameInput,
+            password: passwordInput,
+          };
+        // Simple POST request with a JSON body using fetch
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: z
+            };
+            
+            fetch('https://localhost:7104/api/Users', requestOptions)
+                .then(response => response.json()).
+                then(res=>{
+                    if(res){
+                      console.log(res);
+                    }
+                    else {
+                        console.log("noooo");
+                    };
+        })
+}
 
-    }
+    
 
     function setErrorFor(input, message) {
         const formControl = input.parentElement;
@@ -83,7 +131,6 @@ function SignPage2() {
                                 <input type="password" id="password"></input>
                                 <small>Error message</small>
                             </div>
-
                             <button onClick={CheckInput}>Submit</button>
                             <div className="signup">
                                 Not registered? <a href="/Register">Click here</a> to sign up
