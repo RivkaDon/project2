@@ -28,10 +28,15 @@ namespace WebAPI.Controllers
             chatService = new ChatService(id);
         }*/
 
-        private void setMessageService(string id)
+        private int setMessageService(string id)
         {
             Chat c = chatService.Get(id);
-            messageService = new MessageService(c);
+            if (c != null)
+            {
+                messageService = new MessageService(c);
+                return 0;
+            }
+            return 1;
         }
 
         /// <summary>
@@ -41,6 +46,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public List<Contact> Get()
         {
+            Response.StatusCode = 200;
             return contactService.GetAllContacts();
         }
 
@@ -58,8 +64,8 @@ namespace WebAPI.Controllers
                 // Response.StatusCode = 404;
                 Response.StatusCode = (int) HttpStatusCode.NotFound;
                 return null;
-                //return new HttpNotFoundResult();
             }
+            Response.StatusCode = 200;
             return contact;
         }
 
@@ -71,8 +77,20 @@ namespace WebAPI.Controllers
         [HttpGet("{id}/messages")]
         public List<Message> GetMessages(string id)
         {
-            setMessageService(id);
-            return messageService.GetAllMessages();
+            if (setMessageService(id) > 0)
+            {
+                Response.StatusCode = 404;
+                return null;
+            }
+            List<Message> messages = messageService.GetAllMessages();
+
+            if (messages == null)
+            {
+                Response.StatusCode = 404;
+                return null;
+            }
+            Response.StatusCode = 200;
+            return messages;
         }
 
         /// <summary>
@@ -84,8 +102,20 @@ namespace WebAPI.Controllers
         [HttpGet("{id1}/messages/{id2}")]
         public Message Get(string id1, string id2)
         {
-            setMessageService(id1);
-            return messageService.Get(id2);
+            if (setMessageService(id1) > 0)
+            {
+                Response.StatusCode = 404;
+                return null;
+            }
+            Message message = messageService.Get(id2);
+
+            if (message == null)
+            {
+                Response.StatusCode = 404;
+                return null;
+            }
+            Response.StatusCode = 200;
+            return message;
         }
 
         /// <summary>
@@ -96,7 +126,13 @@ namespace WebAPI.Controllers
         public void Post([FromBody] RequestCreationOfNewContact request)
         {
             // setChatService(Global.Id);
-            chatService.CreateChat(request.Id, request.Name, request.Server);
+            int num = chatService.CreateChat(request.Id, request.Name, request.Server);
+            if (num > 0)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
+            Response.StatusCode = 201;
         }
 
         /// <summary>
@@ -106,8 +142,13 @@ namespace WebAPI.Controllers
         [HttpPost("{id}/messages")]
         public void Post(string id, [FromBody] RequestCreationOfNewMessage request)
         {
-            setMessageService(id);
+            if (setMessageService(id) > 0)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
             messageService.SendMessage(request.Content, true);
+            Response.StatusCode = 201;
         }
 
         /// <summary>
@@ -118,10 +159,18 @@ namespace WebAPI.Controllers
         [HttpPut("{id}")]
         public void Put(string id, [FromBody] RequestEditContact request)
         {
-            contactService.Edit(id, request.Name, request.Server);
             Contact contact = contactService.Get(id);
+            if (contact == null)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
+
+            contactService.Edit(id, request.Name, request.Server);
+            
             // setChatService(Global.Id);
             chatService.Edit(id, contact);
+            Response.StatusCode = 204;
         }
 
         /// <summary>
@@ -133,9 +182,16 @@ namespace WebAPI.Controllers
         [HttpPut("{id1}/messages/{id2}")]
         public void Put(string id1, string id2, [FromBody] RequestEditMessage request)
         {
-            setMessageService(id1);
+            bool b1 = setMessageService(id1) > 0;
+            bool b2 = messageService.Get(id2) == null;
+            if (b1 || b2)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
             messageService.Edit(id2, true, request.Content, DateTime.Now);
-            
+            Response.StatusCode = 204;
+
         }
 
         /// <summary>
@@ -145,8 +201,13 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(string id)
         {
-            // setChatService(Global.Id);
+            if (chatService.Get(id) == null)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
             chatService.Delete(id);
+            Response.StatusCode = 204;
         }
 
         /// <summary>
@@ -157,19 +218,20 @@ namespace WebAPI.Controllers
         [HttpDelete("{id1}/messages/{id2}")]
         public void Delete(string id1, string id2)
         {
-            setMessageService(id1);
-            /*Chat c = chatService.Get(id1);
-            messageService = new MessageService(c);*/
+            bool b1 = setMessageService(id1) > 0;
+            bool b2 = messageService.Get(id2) == null;
+            if (b1 || b2)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
+            
             messageService.Delete(id2);
 
             List<Message> messages = messageService.GetAllMessages();
-            if (messages.Count > 0)
-            {
-                /*Contact contact = contactService.Get(id1);*/
-                /*Contact contact = c.Contact;*/
-                contactService.UpdateLastDate(id1, messages);
+            contactService.UpdateLastDate(id1, messages);
 
-            }
+            Response.StatusCode = 204;
         }
     }
 }

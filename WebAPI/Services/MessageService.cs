@@ -38,8 +38,11 @@ namespace WebAPI.Services
         {
             List<Message> messages = GetAllMessages();
             int len = messages.Count;
-            string lastId = messages[len - 1].Id;
-            return lastId + 1;
+            if (len > 0)
+            {
+                return messages[len - 1].Id;
+            }
+            return "";
         }
 
         public bool Exists(string id)
@@ -104,7 +107,7 @@ namespace WebAPI.Services
                 Message message = new Message();
                 int len = GetAllMessages().Count;
 
-                message.Id = len.ToString();
+                message.Id = lastId() + len;
                 message.Created = DateTime.Now;
                 message.Content = content;
                 message.Sent = sent;

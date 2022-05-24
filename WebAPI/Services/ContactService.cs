@@ -19,11 +19,6 @@ namespace WebAPI.Services
             user = userService.Get(id);
         }
 
-        /*public User User()
-        {
-            return user;
-        }*/
-
         public List<Contact> GetAllContacts()
         {
             if (user == null) return null;
@@ -70,27 +65,34 @@ namespace WebAPI.Services
         public void CreateContact(string id, string name, string server)
         {
             if (Exists(id)) return;
-            /*contacts.Add(new Contact { Id = id, Name = name, Server = server });*/
             userService.CreateContact(id, name, server);
         }
 
         public void UpdateLastDate(string id, List<Message> messages)
         {
-            DateTime? created = messages[0].Created;
-            string last = messages[0].Content;
             Contact contact = Get(id);
 
-            foreach (Message m in messages)
+            if (messages.Count > 0)
             {
-                if (m.Created.Value < created.Value)
-                {
-                    created = m.Created.Value;
-                    last = m.Content;
-                }
-            }
+                DateTime? created = messages[0].Created;
+                string last = messages[0].Content;
 
-            contact.Last = last;
-            contact.LastDate = created;
+                foreach (Message m in messages)
+                {
+                    if (created.Value < m.Created.Value)
+                    {
+                        created = m.Created.Value;
+                        last = m.Content;
+                    }
+                }
+
+                contact.Last = last;
+                contact.LastDate = created;
+            } else
+            {
+                contact.Last = null;
+                contact.LastDate = null;
+            }
         }
     }
 }

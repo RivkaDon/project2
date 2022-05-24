@@ -73,34 +73,37 @@ namespace WebAPI.Services
             }
         }
 
-        public void CreateChat(string id, string name, string server)
+        public int CreateChat(string id, string name, string server)
         {
-            if (Exists(id)) return;
-            if (id == user.Id) return;
+            if (Exists(id)) return 1;
+            if (id == user.Id) return 1;
             userService.CreateChat(id, name, server);
+            return 0;
         }
 
-        public void CreateMessage(Chat chat, Message message)
+        public int CreateMessage(Chat chat, Message message)
         {
-            if (message == null) return;
+            if (message == null) return 1;
 
             MessageList messageList = GetMessageList(chat);
-            if (messageList == null) return;
-            if (!messageList.Messages.Contains(message)) return;
+            if (messageList == null) return 1;
+            if (!messageList.Messages.Contains(message)) return 1;
 
             messageList.Add(message);
+            return 0;
         }
 
-        public void DeleteMessage(Chat chat, Message message)
+        public int DeleteMessage(Chat chat, Message message)
         {
-            if (message == null) return;
+            if (message == null) return 1;
 
             //MessageList messageList = GetMessageList(chat);
             MessageList messageList = chat.Messages;
-            if (messageList == null) return;
-            if (!messageList.Messages.Contains(message)) return;
+            if (messageList == null) return 1;
+            if (!messageList.Messages.Contains(message)) return 1;
 
             messageList.Remove(message);
+            return 0;
         }
     }
 }

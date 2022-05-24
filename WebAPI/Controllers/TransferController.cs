@@ -28,10 +28,18 @@ namespace WebAPI.Controllers
             userService = new UserService(from);
 
             User user1 = userService.Get(from);
-            if (user1 == null) return; // Checking if the user exists.
+            if (user1 == null)
+            {
+                Response.StatusCode = 404;
+                return;
+            } // Checking if the user exists.
 
             User user2 = userService.Get(to);
-            if (user2 == null) return;
+            if (user2 == null)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
 
             chatService = new ChatService(from);
             Chat chat = chatService.Get(to);
@@ -48,7 +56,8 @@ namespace WebAPI.Controllers
 
             IMessageService messageService = new MessageService(chat, from);
             messageService.SendMessage(request.Content, false);
-            //messageService.sendTo(request.)
+
+            Response.StatusCode = 201;
 
             // update the second user
         }

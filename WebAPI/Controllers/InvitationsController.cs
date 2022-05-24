@@ -12,7 +12,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class InvitationsController : ControllerBase
     {
-        private IUserService userService ;
+        private IUserService userService;
         private IChatService chatService;
         private IContactService contactService;
 
@@ -25,16 +25,29 @@ namespace WebAPI.Controllers
         {
             userService = new UserService(request.From);
             User user = userService.Get(request.From);
-            if (user == null) return; // Checking if the user exists.
+            if (user == null)  // Checking if the user exists.
+            {
+                Response.StatusCode = 404;
+                return;
+            }
 
             string id = request.To;
 
             contactService = new ContactService(request.From);
             Contact contact = contactService.Get(id);
-            if (contact != null) return; // Checking if the contact already exists (as one of the user's contacts).
+            if (contact != null) // Checking if the contact already exists (as one of the user's contacts).
+            {
+                Response.StatusCode = 404;
+                return;
+            }
 
             chatService = new ChatService(request.From);
-            chatService.CreateChat(id, id, request.Server); // Creates a chat and a contact. The name of the contact is the same his/hers id.
+            int num = chatService.CreateChat(id, id, request.Server); // Creates a chat and a contact. The name of the contact is the same his/hers id.
+            if (num > 0)
+            {
+                Response.StatusCode = 404;
+            }
+            Response.StatusCode = 201;
         }
     }
 }
