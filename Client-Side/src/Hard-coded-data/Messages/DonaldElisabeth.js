@@ -1,0 +1,2 @@
+const QueenGmesseges = [[1,'Greetings', '4/17/2022, 4:15:56 PM', 'text'],[0,'Come for tea?', '4/17/2022, 4:16:56 PM', 'text'],[0,'tea.jpg', '4/17/2022, 4:17:56 PM', 'pic']];
+export default QueenGmesseges; 

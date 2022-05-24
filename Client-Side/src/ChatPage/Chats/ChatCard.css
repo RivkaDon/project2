@@ -1,0 +1,44 @@
+  #contactImage{
+    padding-top: 2%;
+    padding-right: 2%;
+  }
+  .sent{
+    text-align-last: right;
+  }
+  .recieved{
+    text-align-last: left;
+  }
+  #dropdownMenuButton1{
+    left: 0.5%;
+    position: absolute;
+  }
+  .badge{
+    font-size: large;
+    margin: 0.5%;
+  }
+  #picSent{
+    width: 180px;
+    height: 200px;
+    margin-left: auto;
+    margin-bottom: 0.5%;
+  }
+  #picRecieved{
+    width: 180px;
+    height: 200px;
+    margin-right: auto;
+    margin-bottom: 0.5%;
+  }
+  .dateAndTime{
+    font-size:x-small;
+    position: relative;
+
+  }
+  #background{
+    top:12%;
+    padding: 0%;
+    margin: 0%;
+    height:87%;
+    width: 65%;
+    background-image: url(../chatWallpaper2.jpg);
+    position:absolute;
+  }
