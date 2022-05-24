@@ -5,6 +5,17 @@ namespace WebAPI.Services
     public class UserService : IUserService
     {
         private static UserList users = new UserList();
+        private User user;
+
+        public UserService()
+        {
+            user = Get(Global.Id);
+        }
+
+        public UserService(string id)
+        {
+            user = Get(id);
+        }
 
         public List<User> GetAllUsers()
         {
@@ -45,20 +56,20 @@ namespace WebAPI.Services
             }
         }
 
-        public void CreateUser(string id, string name, string password)
+        public int CreateUser(string id, string name, string password)
         {
-            if (Exists(id)) return;
-            /*var len = GetAllUsers().Count();
-            string id = len.ToString();*/
+            if (Exists(id)) return 1;
+
             users.Add(new User {
                 Id = id, Name = name, Password = password, Contacts = new ContactList(), Chats = new ChatList()
             });
+            return 0;
         }
 
-        public void CreateContact(string id, string name, string server)
+        public int CreateContact(string id, string name, string server)
         {
-            if (Exists(id)) return;
-            User user = Get(Global.Id);
+            if (!Exists(id)) return 1; // ///////////////////////////////////////
+            // User user = Get(id);
             if (user != null)
             {
                 /*if (user.Contacts == null)
@@ -84,22 +95,33 @@ namespace WebAPI.Services
 
                 user.Chats.Add(chat);
             }
+            return 0;
         }
 
-        public void CreateChat(string id, string name, string server)
+        public int updateUser(string id, Contact contact, string last, DateTime? lastDate)
         {
-            CreateContact(id, name, server);
+            User user = Get(id);
+            if (user == null) return 1;
+            if (contact == null) return 1;
+
+            user.Contacts.Update(contact, last, lastDate);
+            return 0;
+        }
+
+        public int CreateChat(string id, string name, string server)
+        {
+            return CreateContact(id, name, server);
         }
 
         public void DeleteContact(Contact contact)
         {
-            User user = Get(Global.Id);
+            // User user = Get(id);
             users.DeleteContact(user, contact);
         }
 
         public void DeleteChat(Chat chat)
         {
-            User user = Get(Global.Id);
+            // User user = Get(id);
             DeleteContact(chat.Contact);
             users.DeleteChat(user, chat);
         }

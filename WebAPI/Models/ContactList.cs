@@ -32,6 +32,11 @@
             }
         }
 
+        public void Update(Contact contact, string last, DateTime? lastDate)
+        {
+            Edit(contact, contact.Name, contact.Server, last, lastDate);
+        }
+
         public void Remove(Contact contact)
         {
             if (contact == null) return;
