@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using WebAPI.Models;
 using WebAPI.Services;
 
@@ -61,8 +60,7 @@ namespace WebAPI.Controllers
             Contact contact = contactService.Get(id);
             if (contact == null)
             {
-                // Response.StatusCode = 404;
-                Response.StatusCode = (int) HttpStatusCode.NotFound;
+                Response.StatusCode = 404;
                 return null;
             }
             Response.StatusCode = 200;
