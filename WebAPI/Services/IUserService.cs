@@ -4,7 +4,6 @@ namespace WebAPI.Services
 {
     public interface IUserService
     {
-        // public static void SetGlobalUser(string id);
         public List<User> GetAllUsers();
         public User Get(string id);
         public void Edit(string id, string name = null, string password = null);

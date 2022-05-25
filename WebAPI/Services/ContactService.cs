@@ -56,13 +56,7 @@ namespace WebAPI.Services
         public void Delete(string id)
         {
             Contact contact = Get(id);
-            if (contact != null)
-            {
-                userService.DeleteContact(contact);
-
-                // IUserService us = new UserService(id);
-                //
-            }
+            if (contact != null) userService.DeleteContact(contact);  // add else return 1 for 404
         }
 
         public void CreateContact(string id, string name, string server)

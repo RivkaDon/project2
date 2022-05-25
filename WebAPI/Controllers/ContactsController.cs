@@ -18,15 +18,10 @@ namespace WebAPI.Controllers
 
         public ContactsController()
         {
-            Global.Id = "1"; // delete later!
+            Global.Id = "1"; // delete later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             contactService = new ContactService(Global.Id);
             chatService = new ChatService(Global.Id);
         }
-
-        /*private void setChatService(string id)
-        {
-            chatService = new ChatService(id);
-        }*/
 
         private int setMessageService(string id)
         {
@@ -137,7 +132,8 @@ namespace WebAPI.Controllers
         /// <summary>
         /// Creates new message.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="id"></param>
+        /// <param name="request"></param>
         [HttpPost("{id}/messages")]
         public void Post(string id, [FromBody] RequestCreationOfNewMessage request)
         {
@@ -166,8 +162,6 @@ namespace WebAPI.Controllers
             }
 
             contactService.Edit(id, request.Name, request.Server);
-            
-            // setChatService(Global.Id);
             chatService.Edit(id, contact);
             Response.StatusCode = 204;
         }

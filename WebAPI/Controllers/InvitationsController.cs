@@ -24,9 +24,6 @@ namespace WebAPI.Controllers
             if (request == null) return;
             int num = invitationService.invite(request.From, request.To, request.Server);
             if (num == 0) invited = true;
-
-            /*if (num > 0) Response.StatusCode = 404;
-            else Response.StatusCode = 201;*/
         }
     }
 }

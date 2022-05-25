@@ -7,8 +7,6 @@ namespace WebAPI.Services
         private IUserService userService;
         private User user;
 
-        /*private static ChatList chats = new ChatList();*/
-
         public ChatService()
         {
             userService = new UserService();
@@ -67,16 +65,7 @@ namespace WebAPI.Services
         public void Delete(string id)
         {
             Chat chat = Get(id);
-            if (chat != null)
-            {
-                userService.DeleteChat(chat);
-
-                /*IUserService us = new UserService(id);
-                User u = us.Get(id);
-                List<Chat> chats = u.Chats.Chats;
-                Chat c = chats.Find(c => c.Id == user.Id);
-                us.DeleteChat(c);*/
-            }
+            if (chat != null) userService.DeleteChat(chat); // add else return 1 for 404
         }
 
         public int CreateChat(string id, string name, string server)
@@ -84,9 +73,6 @@ namespace WebAPI.Services
             if (Exists(id)) return 1;
             if (id == user.Id) return 1;
             userService.CreateChat(id, name, server);
-
-            //IUserService us = new UserService(id);
-            //us.CreateChat(user.Id, user.Name, server); // need to change this to the user's server
             return 0;
         }
 
@@ -114,7 +100,6 @@ namespace WebAPI.Services
         {
             if (message == null) return 1;
 
-            //MessageList messageList = GetMessageList(chat);
             MessageList messageList = chat.Messages;
             if (messageList == null) return 1;
             if (!messageList.Messages.Contains(message)) return 1;

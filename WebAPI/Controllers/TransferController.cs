@@ -25,6 +25,12 @@ namespace WebAPI.Controllers
             string from = request.From;
             string to = request.To;
 
+            if (from == to)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
+
             userService = new UserService(to);
 
             User user1 = userService.Get(to);
@@ -33,13 +39,6 @@ namespace WebAPI.Controllers
                 Response.StatusCode = 404;
                 return;
             }
-
-            /*User user2 = userService.Get(from);
-            if (user2 == null)
-            {
-                Response.StatusCode = 404;
-                return;
-            }*/
 
             chatService = new ChatService(to);
             Chat chat = chatService.Get(from);
@@ -56,22 +55,11 @@ namespace WebAPI.Controllers
                     return;
                 }
                 invitationsController.invited = false;
-
-                // chatService.CreateChat(to, user2.Name, r.Server);
                 chat = chatService.Get(from);
             }
 
             IMessageService messageService = new MessageService(chat, to);
             messageService.SendMessage(request.Content, true);
-
-            /*if (to == Global.Id)
-            {
-                messageService.SendMessage(request.Content, true);
-            } else
-            {
-                messageService.SendMessage(request.Content, false);
-            }*/
-
 
             Response.StatusCode = 201;
 

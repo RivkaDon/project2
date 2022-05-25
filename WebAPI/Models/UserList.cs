@@ -53,8 +53,6 @@
             }
         }
 
-        // maybe add remove
-
         public void DeleteContact(User user, Contact contact)
         {
             if (contact == null) return;
