@@ -35,58 +35,23 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
         
     };
     const messageArr = messageGetter;
+    
     const loadMessages = function () {
         if (messageArr) {
             return (messageArr.map((element,key) => {
-                switch (element[0]) {
-                    case 1:
-                        if (element[3] == 'text') {
-                            return <div key={element} className="sent"><span className="badge bg-secondary">{element[1]}<br></br><div className="dateAndTime">{element[2]}</div></span>
-                            </div>;
-                        }
-                        else if (element[3] == 'vid') {
-                            return <div key={element} className="sent"><span className="badge bg-secondary"><video width="320" height="240" muted controls playsInline>
-                                <source src={element[1]} type="video/mp4"></source>
-                            </video><br></br><div className="dateAndTime">{element[2]}</div></span></div>;
-                        }
-                        else if (element[3] == 'sound') {
-                            return <div key={element} className="sent"><span className="badge bg-secondary"><audio controls>
-                                <source src={element[1]} type="audio/mpeg"></source>
-                            </audio><br></br><div className="dateAndTime">{element[2]}</div></span></div>;
-                        }
-                        else if (element[3] == 'recording') {
-                            return <div key={element} className="sent"><span className="badge bg-secondary"><audio controls>
-                                <source src={element[1]} type="audio/mpeg"></source>
-                            </audio><br></br><div className="dateAndTime">{element[2]}</div></span></div>;
-                        }
-                        return <div key={element} className="sent"><div className="badge bg-secondary "><img id="picSent" src={element[1]} alt="" />
-                        <div className="dateAndTime">{element[2]}</div></div></div>;
-                    case 0:
-                        if (element[3] == 'text') {
-                            return <div key={element} className="recieved"><span className="badge bg-secondary">{element[1]}<br></br><div className="dateAndTime">{element[2]}</div></span>
-                            </div>;
-                        }
-                        else if (element[3] == 'vid') {
-                            return <div key={element} className="recieved"><span className="badge bg-secondary"><video width="320" height="240" muted controls playsInline>
-                                <source src={element[1]} type="video/mp4"></source>
-                            </video><br></br><div className="dateAndTime">{element[2]}</div></span></div>;
-                        }
-                        else if (element[3] == 'sound') {
-                            return <div key={element} className="recieved"><span className="badge bg-secondary"><audio controls>
-                                <source src={element[1]} type="audio/mpeg"></source>
-                            </audio><br></br><div className="dateAndTime">{element[2]}</div></span></div>;
-                        }
-                        else if (element[3] == 'recording') {
-                            return <div key={element} className="recieved"><span className="badge bg-secondary"><audio controls>
-                                <source src={element[1]} type="audio/mpeg"></source>
-                            </audio><br></br><div className="dateAndTime">{element[2]}</div></span></div>;
-                        }
-                        return <div key={element} className="recieved"><div className="badge bg-secondary "><img id="picSent" src={element[1]} alt="" />
-                        <div className="dateAndTime">{element[2]}</div></div></div>;
-                    default:
-                        return;
+                
+                if (element[3][1])
+                {
+                return <div key={element[0][1]} className="sent"><div className="badge bg-secondary ">{element[1][1]}
+                <div className="dateAndTime">{element[2][1]}</div></div></div>;
                 }
-            }));
+                else {
+                return <div key={element[0][1]} className="recieved"><div className="badge bg-secondary ">{element[1][1]}
+                        <div className="dateAndTime">{element[2][1]}</div></div></div>;
+                    
+                }
+            }
+            ));
         }
     };
     return (

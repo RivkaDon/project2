@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import ContactCard from './Contacts/ContactCard';
 import React from 'react';
 import OpenChat from './Chats/ChatCard';
-import { useLocation, useResolvedPath } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import usersList from '../signIn/usersList';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 
@@ -12,6 +12,9 @@ import { HubConnectionBuilder } from '@microsoft/signalr';
 function ChatPage({}) {
     // hook for passing and updating contact messages
     const [getMessages, setMessages] = useState();
+
+    // hook for passing id of contact whom we clicked on their contact card
+    const [getContactId, setContactId] = useState();
 
     // to get contacts of connected user from server
     const [list, setList] = useState([]);
@@ -66,6 +69,7 @@ function ChatPage({}) {
         func()
     }, []);
 
+
     // to get messeges of clicked contact from server
     useEffect(()=>{
         /////////- need to get id- do with getter from contactcard 
@@ -79,6 +83,7 @@ function ChatPage({}) {
     }
         func()
     }, []);
+
     
     const location = useLocation();
     var currentUser = location.state;
@@ -123,9 +128,29 @@ function ChatPage({}) {
     
     const OnClickChat = function () {
     
+        // to get messeges of clicked contact from server
+    useEffect(()=>{
+        var id = getContactId;
+        var j = new Array();
+        if (getFlag) {
+        const func = async()=> {
+        await fetch('https://localhost:7104/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
+        .then(data => j = data);
+        let myMap;
+        let myArr = new Array;
+        var i = 0;
+        j.forEach(element => {
+            myMap = new Array(Object.entries(element));
+            myArr[i] = myMap.at(0);
+            i++;
+        });
+        setMessages(myArr);
+        
+    }
+        func()
+    }}, []);
         if(getFlag == true)
         {
-            
             return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} />
         }
     }
@@ -175,7 +200,7 @@ function ChatPage({}) {
             </div>
             <div className="row">
                 <div className="col-4 overflow-auto" >
-                {list.map((contact) => <ContactCard name={contact.at(0).at(1).at(1)} lastMessages={contact.at(0).at(3)} setter={setChat} flagSetter={setFlag} />)}
+                {list.map((contact) => <ContactCard id={contact.at(0).at(0).at(1)} name={contact.at(0).at(1).at(1)} lastMessages={contact.at(0).at(3).at(1)} setter={setChat} flagSetter={setFlag} idSetter={setContactId} />)}
                 </div>
 
             </div>
