@@ -13,6 +13,7 @@ namespace WebAPI.Services
         public int CreateContact(string id, string name, string server);
         public int updateUser(string id, Contact contact, string last, DateTime? lastDate);
         public int CreateChat(string id, string name, string server);
+        public int CreateChatInvitation(string id, string name, string server);
         public void DeleteContact(Contact contact);
         public void DeleteChat(Chat chat);
     }

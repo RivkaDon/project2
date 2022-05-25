@@ -18,8 +18,9 @@ namespace WebAPI.Controllers
 
         public ContactsController()
         {
-            contactService = new ContactService();
-            chatService = new ChatService();
+            Global.Id = "1"; // delete later!
+            contactService = new ContactService(Global.Id);
+            chatService = new ChatService(Global.Id);
         }
 
         /*private void setChatService(string id)
