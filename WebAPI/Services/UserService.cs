@@ -68,7 +68,8 @@ namespace WebAPI.Services
 
         public int CreateContact(string id, string name, string server)
         {
-            if (!Exists(id)) return 1; // ///////////////////////////////////////
+            
+            //if (Exists(id)) return 1;
             // User user = Get(id);
             if (user != null)
             {
@@ -109,6 +110,12 @@ namespace WebAPI.Services
         }
 
         public int CreateChat(string id, string name, string server)
+        {
+            if (!Exists(id)) return 1;
+            return CreateContact(id, name, server);
+        }
+
+        public int CreateChatInvitation(string id, string name, string server)
         {
             return CreateContact(id, name, server);
         }

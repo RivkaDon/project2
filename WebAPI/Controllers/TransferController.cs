@@ -28,18 +28,18 @@ namespace WebAPI.Controllers
             userService = new UserService(to);
 
             User user1 = userService.Get(to);
-            if (user1 == null)
-            {
-                Response.StatusCode = 404;
-                return;
-            } // Checking if the user exists.
-
-            User user2 = userService.Get(from);
-            if (user2 == null)
+            if (user1 == null) // Checking if the user exists.
             {
                 Response.StatusCode = 404;
                 return;
             }
+
+            /*User user2 = userService.Get(from);
+            if (user2 == null)
+            {
+                Response.StatusCode = 404;
+                return;
+            }*/
 
             chatService = new ChatService(to);
             Chat chat = chatService.Get(from);
@@ -50,6 +50,13 @@ namespace WebAPI.Controllers
                 RequestOfNewInvitation r = invitationService.Create(from, to, "localhost:7105");
 
                 invitationsController.Post(r); // Sending an invitation.
+                if (!invitationsController.invited)
+                {
+                    Response.StatusCode = 404;
+                    return;
+                }
+                invitationsController.invited = false;
+
                 // chatService.CreateChat(to, user2.Name, r.Server);
                 chat = chatService.Get(from);
             }
