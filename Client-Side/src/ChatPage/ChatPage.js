@@ -7,6 +7,7 @@ import OpenChat from './Chats/ChatCard';
 import { useLocation } from 'react-router-dom';
 import usersList from '../signIn/usersList';
 import { HubConnectionBuilder } from '@microsoft/signalr';
+import { NavLink } from 'react-router-dom';
 
 
 function ChatPage({}) {
@@ -30,7 +31,7 @@ function ChatPage({}) {
             .withAutomaticReconnect()
             .build();
 
-        setConnection(signalrCon);
+            setMyConn(signalrCon);
     }, []);
 
     useEffect(() => {
@@ -70,19 +71,19 @@ function ChatPage({}) {
     }, []);
 
 
-    // to get messeges of clicked contact from server
-    useEffect(()=>{
-        /////////- need to get id- do with getter from contactcard 
-        var id = 5;
-        /////////- need to get id
-        var j = new Array();
-        const func = async()=> {
-        await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
-        .then(data => j = data);
-        //console.log(j);
-    }
-        func()
-    }, []);
+    // // to get messeges of clicked contact from server
+    // useEffect(()=>{
+    //     /////////- need to get id- do with getter from contactcard 
+    //     var id = 2;
+    //     /////////- need to get id
+    //     var j = new Array();
+    //     const func = async()=> {
+    //     await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
+    //     .then(data => j = data);
+    //     //console.log(j);
+    // }
+    //     func()
+    // }, []);
 
     
     const location = useLocation();
@@ -100,7 +101,7 @@ function ChatPage({}) {
     const [getFlag, setFlag] = useState(false);
     const [getContactImage, setContactImage] = useState();
     // hook for rerendering the page 
-    const [reRender, setReRender] = useState(0);
+    const [reRender, setReRender] = useState([]);
     
     // hook for passing name of contact whom we clicked on their contact card
     const [getChat, setChat] = useState();
@@ -112,17 +113,34 @@ function ChatPage({}) {
     const isUser = function (name) {
         return usersList.some(code => { return (code.username === name); });
     }
-    const SubmitNewContact = function () {
-        let myArray = [["", ""]];
-        let name = newUserName.current.value;
-        if (isUser(name)) {
-            addUserName((prev) => {
-                return prev.concat({ img: getUsernameReturnImg(name), name: getUsernameReturnNickName(name), lastMessage: myArray, time: "" });
-            });
-        }
-        else {
-            alert("username not found");
-        }
+    const SubmitNewContact = async function () {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: newUserName.current.value })
+        };
+        await fetch('https://localhost:7105/api/Contacts/', requestOptions).then(res=>{
+            if(res){
+                console.log("yipeeee");
+            }
+            else {
+                console.log("oooof");
+        };})
+        var j = new Array();
+        const func = async()=> {
+        await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
+        .then(data => j = data);
+       
+        let myMap;
+        let myArr = new Array;
+        var i = 0;
+        j.forEach(element => {
+            myMap = new Array(Object.entries(element));
+            myArr[i] = myMap;
+            i++;
+        });
+        setList(myArr);}
+        func();
         newUserName.current.value = '';
     }
     
@@ -145,13 +163,12 @@ function ChatPage({}) {
             i++;
         });
         setMessages(myArr);
-        
-    }
+        }
         func()
-    }}, []);
-        if(getFlag == true)
+    }}, [setFlag(0)]);
+        if(getFlag!= true)
         {
-            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} />
+            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} idGetter={getContactId} contactListSetter={setList} />
         }
     }
     const getUsernameReturnNickName = function(userName){
@@ -168,6 +185,9 @@ function ChatPage({}) {
                         <div type="button" className="btn">
                             <i className="bi bi-envelope-paper-heart-fill"></i>
                         </div>{getUsernameReturnNickName(currentUser)}
+                        <button type="button" id='rate' className="btn" onClick={()=>NavLink("https://localhost:7136/")} >
+                        <i className="bi bi-star"></i>Rate Us<i className="bi bi-star"></i>
+                        </button>
                         <button type="button" id='addButton' className="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
                             <i className="bi bi-person-plus"></i>
                         </button>
@@ -200,7 +220,7 @@ function ChatPage({}) {
             </div>
             <div className="row">
                 <div className="col-4 overflow-auto" >
-                {list.map((contact) => <ContactCard id={contact.at(0).at(0).at(1)} name={contact.at(0).at(1).at(1)} lastMessages={contact.at(0).at(3).at(1)} setter={setChat} flagSetter={setFlag} idSetter={setContactId} />)}
+                {list.map((contact, key) => <ContactCard key={key} id={contact.at(0).at(0).at(1)} name={contact.at(0).at(1).at(1)} lastMessages={contact.at(0)} setter={setChat} flagSetter={setFlag} idSetter={setContactId} />)}
                 </div>
 
             </div>
