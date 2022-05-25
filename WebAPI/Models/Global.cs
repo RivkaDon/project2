@@ -2,7 +2,7 @@
 {
     public class Global
     {
-        public static string Id = "1"; // jwt
+        public static string Id { get; set; }
         
     }
 }

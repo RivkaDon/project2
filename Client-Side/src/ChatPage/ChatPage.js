@@ -6,6 +6,8 @@ import React from 'react';
 import OpenChat from './Chats/ChatCard';
 import { useLocation } from 'react-router-dom';
 import usersList from '../signIn/usersList';
+import { HubConnectionBuilder } from '@microsoft/signalr';
+
 
 function ChatPage({}) {
     // hook for passing and updating contact messages
@@ -16,10 +18,42 @@ function ChatPage({}) {
 
     // to get contacts of connected user from server
     const [list, setList] = useState([]);
+    const [ myConn, setMyConn] = useState(null);
+   // const [ myNewMsgs, setMyNewMsgs ] = useState([]);
+    const latestMeseges = useRef(null);
+
+    latestMeseges.current = getMessages;
+
+    useEffect(() => {
+        const signalrCon = new HubConnectionBuilder()
+            .withUrl('https://localhost:7105/hubs/myChat')
+            .withAutomaticReconnect()
+            .build();
+
+        setConnection(signalrCon);
+    }, []);
+
+    useEffect(() => {
+        if (myConn) {
+            myConn.start()
+                .then(result => {
+                    console.log('Connected!');
+    
+                    myConn.on('Receive', message => {
+                        const updatedChat = [...latestMeseges.current];
+                        updatedChat.push(message);
+                    
+                        setMessages(updatedChat);
+                    });
+                })
+                .catch(e => console.log('Connection failed: ', e));
+        }
+    }, [myConn]);
+
     useEffect(()=>{
         var j = new Array();
         const func = async()=> {
-        await fetch('https://localhost:7104/api/Contacts', {method:'GET'}).then(response => response.json())
+        await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
         .then(data => j = data);
        
         let myMap;
@@ -35,7 +69,21 @@ function ChatPage({}) {
         func()
     }, []);
 
-    
+
+    // to get messeges of clicked contact from server
+    useEffect(()=>{
+        /////////- need to get id- do with getter from contactcard 
+        var id = 5;
+        /////////- need to get id
+        var j = new Array();
+        const func = async()=> {
+        await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
+        .then(data => j = data);
+        //console.log(j);
+    }
+        func()
+    }, []);
+
     
     const location = useLocation();
     var currentUser = location.state;
@@ -103,7 +151,7 @@ function ChatPage({}) {
     }}, []);
         if(getFlag == true)
         {
-            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} />
+            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} />
         }
     }
     const getUsernameReturnNickName = function(userName){

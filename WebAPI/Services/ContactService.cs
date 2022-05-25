@@ -59,6 +59,9 @@ namespace WebAPI.Services
             if (contact != null)
             {
                 userService.DeleteContact(contact);
+
+                // IUserService us = new UserService(id);
+                //
             }
         }
 
@@ -66,6 +69,9 @@ namespace WebAPI.Services
         {
             if (Exists(id)) return;
             userService.CreateContact(id, name, server);
+
+            IUserService us = new UserService(id);
+            us.CreateContact(user.Id, user.Name, server); // need to change this to the user's server
         }
 
         public void UpdateLastDate(string id, List<Message> messages)

@@ -6,9 +6,10 @@ import AttachVideo from './VideoAttachment';
 import AttachSound from './SoundAttachment';
 import AttachRecording from './RecordAttachment';
 
-function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter}) {
+function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages}) {
     // in order to go to bottom of scrollbar after opening each chat so we can see the last messeges in convo
     const MyComponent = () => {
+        // lastMessages.current = messageGetter לפני הset
         const divRef = useRef(null);
       
         useEffect(() => {
@@ -19,11 +20,19 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
       }
     const [getMessage, setMessage] = useState(0);
     const newMessage = useRef();
-    const showNewMessage = () => {
+    const showNewMessage = async() => {
         messageGetter.push([1, newMessage.current.value, (new Date()).toLocaleString(), 'text']);
+        try {
+            await connection.invoke('Send', newMessage.current.value);
+        }
+        catch(e) {
+            console.log(e);
+        }
+
         setMessage(getMessage+1);
         newMessage.current.value = "";
         setReRender(messageGetter[messageGetter.length-1][2]);
+        
     };
     const messageArr = messageGetter;
     
