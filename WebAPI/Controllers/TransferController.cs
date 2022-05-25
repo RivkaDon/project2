@@ -25,37 +25,46 @@ namespace WebAPI.Controllers
             string from = request.From;
             string to = request.To;
 
-            userService = new UserService(from);
+            userService = new UserService(to);
 
-            User user1 = userService.Get(from);
+            User user1 = userService.Get(to);
             if (user1 == null)
             {
                 Response.StatusCode = 404;
                 return;
             } // Checking if the user exists.
 
-            User user2 = userService.Get(to);
+            User user2 = userService.Get(from);
             if (user2 == null)
             {
                 Response.StatusCode = 404;
                 return;
             }
 
-            chatService = new ChatService(from);
-            Chat chat = chatService.Get(to);
+            chatService = new ChatService(to);
+            Chat chat = chatService.Get(from);
 
             if (chat == null) // Checking if the contact exists (as one of the user's contacts).
             {
                 InvitationsController invitationsController = new InvitationsController();
-                RequestOfNewInvitation r = invitationService.Create(from, to, "localhost:7104");
+                RequestOfNewInvitation r = invitationService.Create(from, to, "localhost:7105");
 
                 invitationsController.Post(r); // Sending an invitation.
                 // chatService.CreateChat(to, user2.Name, r.Server);
-                chat = chatService.Get(to);
+                chat = chatService.Get(from);
             }
 
-            IMessageService messageService = new MessageService(chat, from);
-            messageService.SendMessage(request.Content, false);
+            IMessageService messageService = new MessageService(chat, to);
+            messageService.SendMessage(request.Content, true);
+
+            /*if (to == Global.Id)
+            {
+                messageService.SendMessage(request.Content, true);
+            } else
+            {
+                messageService.SendMessage(request.Content, false);
+            }*/
+
 
             Response.StatusCode = 201;
 

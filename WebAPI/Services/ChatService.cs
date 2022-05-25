@@ -70,6 +70,12 @@ namespace WebAPI.Services
             if (chat != null)
             {
                 userService.DeleteChat(chat);
+
+                IUserService us = new UserService(id);
+                User u = us.Get(id);
+                List<Chat> chats = u.Chats.Chats;
+                Chat c = chats.Find(c => c.Id == user.Id);
+                us.DeleteChat(c);
             }
         }
 
@@ -78,6 +84,9 @@ namespace WebAPI.Services
             if (Exists(id)) return 1;
             if (id == user.Id) return 1;
             userService.CreateChat(id, name, server);
+
+            IUserService us = new UserService(id);
+            us.CreateChat(user.Id, user.Name, server); // need to change this to the user's server
             return 0;
         }
 

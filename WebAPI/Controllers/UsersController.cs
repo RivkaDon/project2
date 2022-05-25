@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
             return user.Password == password;
         }
 
-        // POST: UsersController/Create
+        // POST: UsersController/Post
         [HttpPost]
         //[ValidateAntiForgeryToken]
         public IActionResult Post(string id, string password)
@@ -46,14 +46,7 @@ namespace WebAPI.Controllers
                     new Claim("UserId", id),
                     new Claim("UserPassword", password)
                 };
-
-                /*var claims = new List<Claim>();
-                claims.Add(new Claim(JwtRegisteredClaimNames.Sub, configuration["JWT:Subject"]));
-                claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-                claims.Add(new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()));
-                claims.Add(new Claim("UserId", id));*/
                 
-
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTParams:SecretKey"]));
                 var mac = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
                 var token = new JwtSecurityToken(
@@ -62,6 +55,9 @@ namespace WebAPI.Controllers
                     claims,
                     expires: DateTime.UtcNow.AddMinutes(20),
                     signingCredentials: mac);
+
+                Global.Id = id;
+
                 return Ok(new JwtSecurityTokenHandler().WriteToken(token));
             } else
             {

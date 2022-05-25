@@ -10,7 +10,7 @@ namespace WebAPI.Services
             {
                 From = from,
                 To = to,
-                Server = "localhost:7104" // maybe change that
+                Server = server // maybe change that
             };
             return r;
         }
