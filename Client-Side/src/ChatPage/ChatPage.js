@@ -134,7 +134,7 @@ function ChatPage({}) {
         var j = new Array();
         if (getFlag) {
         const func = async()=> {
-        await fetch('https://localhost:7104/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
+        await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
         .then(data => j = data);
         let myMap;
         let myArr = new Array;

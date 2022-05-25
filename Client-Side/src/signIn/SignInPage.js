@@ -22,7 +22,7 @@ function SignPage2() {
 //     console.log(userNameInput+','+passwordInput);
     
 //     const func = async()=> {
-//     await fetch('https://localhost:7104/api/Users',{
+//     await fetch('https://localhost:7105/api/Users',{
 //     method: 'POST',
 //             headers:{'Content-type':'application/json'},
 //             body: {userNameInput, passwordInput}
@@ -78,7 +78,7 @@ function CheckInput(event) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
             };
-            fetch('https://localhost:7104/api/Users/?id='+userNameInput+'&password='+passwordInput, requestOptions)
+            fetch('https://localhost:7105/api/Users/?id='+userNameInput+'&password='+passwordInput, requestOptions)
                 .then(res=>{
                     if(res){
                         console.log("yayyy");
