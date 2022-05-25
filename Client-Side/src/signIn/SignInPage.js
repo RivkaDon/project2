@@ -72,23 +72,16 @@ function CheckInput(event) {
             setIsCorrect(true);
         }
         
-         
-        var z = {
-            id: userNameInput,
-            password: passwordInput,
-          };
+        
         // Simple POST request with a JSON body using fetch
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: z
             };
-            
-            fetch('https://localhost:7104/api/Users', requestOptions)
-                .then(response => response.json()).
-                then(res=>{
+            fetch('https://localhost:7104/api/Users/?id='+userNameInput+'&password='+passwordInput, requestOptions)
+                .then(res=>{
                     if(res){
-                      console.log(res);
+                        console.log("yayyy");
                     }
                     else {
                         console.log("noooo");
