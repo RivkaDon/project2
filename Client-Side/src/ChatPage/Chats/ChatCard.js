@@ -5,11 +5,13 @@ import './ChatCard.css'
 import AttachVideo from './VideoAttachment';
 import AttachSound from './SoundAttachment';
 import AttachRecording from './RecordAttachment';
+import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 
 
 function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn, userID}) {
     
     const showAllContactMesseges = async(id)=> {
+        console.log(id);
         let j = new Array();
         await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
         .then(data => j = data);
@@ -64,7 +66,7 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
         };
         console.log(idGetter + "contact");
         await fetch('https://localhost:7105/api/Contacts/'+idGetter+'/messages', requestOptions)
-        await fetch('https://localhost:7105/api/Contacts/'+userID+'/messages', requestOptions)
+        //await fetch('https://localhost:7105/api/Contacts/'+userID+'/messages', requestOptions)
         console.log(userID + "user");
         try {
             await myConn.invoke('Send', newMessage.current.value, contactId);
@@ -72,38 +74,8 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
         catch(e) {
             console.log(e);
         }
-
-         
-        //  const func = async()=> {
-        //     await fetch('https://localhost:7105/api/Contacts/'+idGetter+'/messages', {method:'GET'}).then(response => response.json())
-        //     .then(data => j = data);
-        //     let myMap;
-        //     let myArr = new Array;
-        //     var i = 0;
-        //     j.forEach(element => {
-        //         myMap = new Array(Object.entries(element));
-        //         myArr[i] = myMap.at(0);
-        //         i++;
-        //     });
-        //     messageSetter(myArr);
-        //     }
-           // j = new Array();
-            // const func1 = async()=> {
-            //     await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
-            //     .then(data => j = data);
-               
-            //     let myMap;
-            //     let myArr = new Array;
-            //     var i = 0;
-            //     j.forEach(element => {
-            //         myMap = new Array(Object.entries(element));
-            //         myArr[i] = myMap;
-            //         i++;
-            //     });
-            //     contactListSetter(myArr);
-            // }  
             showAllContactMesseges(idGetter);
-            showAllContactMesseges(userID);
+            //showAllContactMesseges(userID);
             showContacts();
          newMessage.current.value = "";
     };
@@ -121,11 +93,11 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
                 if (element[3][1])
                 {
                 return <div key={element[0][1]} className="sent"><div className="badge bg-secondary ">{element[1][1]}
-                <div className="dateAndTime">{formatTime(element[2][1])}</div></div></div>;
+                <div className="dateAndTime">{element[2][1]}</div></div></div>;
                 }
                 else {
                 return <div key={element[0][1]} className="recieved"><div className="badge bg-secondary ">{element[1][1]}
-                        <div className="dateAndTime">{formatTime(element[2][1])}</div></div></div>;
+                        <div className="dateAndTime">{element[2][1]}</div></div></div>;
                     
                 }
             }
