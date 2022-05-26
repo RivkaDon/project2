@@ -53,16 +53,18 @@ namespace WebAPI.Services
             return chat.Messages;
         }
 
-        public void Edit(string id, Contact contact = null, MessageList messageList = null)
+        public int Edit(string id, Contact contact = null, MessageList messageList = null)
         {
             Chat chat = Get(id);
             if (chat != null)
             {
                 user.Chats.Edit(chat, contact, messageList);
+                return 0;
             }
+            return 1;
         }
 
-        public void Delete(string id)
+        public int Delete(string id)
         {
             Chat chat = Get(id);
             if (chat != null)
@@ -74,7 +76,11 @@ namespace WebAPI.Services
                 List<Chat> chats = u.Chats.Chats;
                 Chat c = chats.Find(c => c.Id == user.Id);
                 us.DeleteChat(c);
+
+                return 0;
             }
+
+            return 1;
         }
 
         public int CreateChat(string id, string name, string server)

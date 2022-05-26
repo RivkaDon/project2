@@ -45,15 +45,17 @@ namespace WebAPI.Services
             if (!Exists(id)) return null;
             return GetAllContacts().Find(e => e.Id == id);
         }
-        public void Edit(string id, string name = null, string server = null, string last = null, DateTime? lastDate = null)
+        public int Edit(string id, string name = null, string server = null, string last = null, DateTime? lastDate = null)
         {
             Contact contact = Get(id);
             if (contact != null)
             {
                 user.Contacts.Edit(contact, name, server, last, lastDate);
+                return 0;
             }
+            return 1;
         }
-        public void Delete(string id)
+        public int Delete(string id)
         {
             Contact contact = Get(id);
             if (contact != null)
@@ -65,7 +67,11 @@ namespace WebAPI.Services
                 List<Contact> contacts = u.Contacts.Contacts;
                 Contact c = contacts.Find(c => c.Id == user.Id);
                 us.DeleteContact(c);
+
+                return 0;
             }
+
+            return 1;
         }
 
         public void CreateContact(string id, string name, string server)
