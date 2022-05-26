@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import ContactCard from './Contacts/ContactCard';
 import React from 'react';
 import OpenChat from './Chats/ChatCard';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import usersList from '../signIn/usersList';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 
@@ -23,6 +23,9 @@ function ChatPage({}) {
     const latestMeseges = useRef(null);
 
     latestMeseges.current = getMessages;
+  
+    const location = useLocation();
+    var currentUser = location.state;
 
     useEffect(() => {
         const signalrCon = new HubConnectionBuilder()
@@ -30,7 +33,7 @@ function ChatPage({}) {
             .withAutomaticReconnect()
             .build();
 
-        setConnection(signalrCon);
+        setMyConn(signalrCon);
     }, []);
 
     useEffect(() => {
@@ -39,11 +42,12 @@ function ChatPage({}) {
                 .then(result => {
                     console.log('Connected!');
     
-                    myConn.on('Receive', message => {
-                        const updatedChat = [...latestMeseges.current];
-                        updatedChat.push(message);
-                    
-                        setMessages(updatedChat);
+                    myConn.on('Receive',( message, theContactId, theUserId) => {
+                        if(currentUser === theContactId || currentUser === theUserId) {
+                            const updatedChat = [...latestMeseges.current];
+                            updatedChat.push(message);
+                            setMessages(updatedChat);
+                        }                                        
                     });
                 })
                 .catch(e => console.log('Connection failed: ', e));
@@ -85,8 +89,8 @@ function ChatPage({}) {
     }, []);
 
     
-    const location = useLocation();
-    var currentUser = location.state;
+    //const location = useLocation();
+    //var currentUser = location.state;
     const getUsernameReturnContacts = function(userName){
         var temp = [];
         usersList.forEach(element => { if(element.username == userName) {temp = element.contacts; return;}}) 
@@ -151,7 +155,7 @@ function ChatPage({}) {
     }}, []);
         if(getFlag == true)
         {
-            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} />
+            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} contactID={getContactId} myConn={myConn} />
         }
     }
     const getUsernameReturnNickName = function(userName){
