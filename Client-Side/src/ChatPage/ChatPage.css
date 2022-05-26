@@ -1,3 +1,7 @@
+
+#rate{
+  font-size: small;
+}
 .overflow-auto{
   width: 34%;
   height: 500px;
@@ -10,6 +14,9 @@
   }
   .bi-paperclip{
     font-size: large;
+  }
+  .bi-star{
+    font-size: small;
   }
   #chatBox{
     padding: 0%;

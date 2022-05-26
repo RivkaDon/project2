@@ -6,10 +6,11 @@ import AttachVideo from './VideoAttachment';
 import AttachSound from './SoundAttachment';
 import AttachRecording from './RecordAttachment';
 
-function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, contactId, myConn}) {
+
+function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn}) {
+    
     // in order to go to bottom of scrollbar after opening each chat so we can see the last messeges in convo
     const MyComponent = () => {
-        // lastMessages.current = messageGetter לפני הset
         const divRef = useRef(null);
       
         useEffect(() => {
@@ -20,8 +21,17 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
       }
     const [getMessage, setMessage] = useState(0);
     const newMessage = useRef();
-    const showNewMessage = async() => {
-        messageGetter.push([1, newMessage.current.value, (new Date()).toLocaleString(), 'text']);
+
+    
+    const showNewMessage = async () => {
+    
+        // Simple POST request with a JSON body using fetch
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: newMessage.current.value })
+        };
+        await fetch('https://localhost:7105/api/Contacts/'+idGetter+'/messages', requestOptions)
         try {
             await myConn.invoke('Send', newMessage.current.value, contactId);
         }
@@ -29,25 +39,58 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
             console.log(e);
         }
 
-        setMessage(getMessage+1);
-        newMessage.current.value = "";
-        setReRender(messageGetter[messageGetter.length-1][2]);
-        
+         var j = new Array();
+         const func = async()=> {
+            await fetch('https://localhost:7105/api/Contacts/'+idGetter+'/messages', {method:'GET'}).then(response => response.json())
+            .then(data => j = data);
+            let myMap;
+            let myArr = new Array;
+            var i = 0;
+            j.forEach(element => {
+                myMap = new Array(Object.entries(element));
+                myArr[i] = myMap.at(0);
+                i++;
+            });
+            messageSetter(myArr);
+            }
+            j = new Array();
+            const func1 = async()=> {
+                await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
+                .then(data => j = data);
+               
+                let myMap;
+                let myArr = new Array;
+                var i = 0;
+                j.forEach(element => {
+                    myMap = new Array(Object.entries(element));
+                    myArr[i] = myMap;
+                    i++;
+                });
+                contactListSetter(myArr);
+            }  
+            func();
+            func1();
+         newMessage.current.value = "";
     };
-    const messageArr = messageGetter;
     
+    
+    const formatTime = function(time) {
+        const myArray = time.split("T");
+        const finalArray = myArray[1].split(".");
+        return myArray[0]+" "+finalArray[0];  
+    }
+    const messageArr = messageGetter;
     const loadMessages = function () {
         if (messageArr) {
             return (messageArr.map((element,key) => {
-                
                 if (element[3][1])
                 {
                 return <div key={element[0][1]} className="sent"><div className="badge bg-secondary ">{element[1][1]}
-                <div className="dateAndTime">{element[2][1]}</div></div></div>;
+                <div className="dateAndTime">{formatTime(element[2][1])}</div></div></div>;
                 }
                 else {
                 return <div key={element[0][1]} className="recieved"><div className="badge bg-secondary ">{element[1][1]}
-                        <div className="dateAndTime">{element[2][1]}</div></div></div>;
+                        <div className="dateAndTime">{formatTime(element[2][1])}</div></div></div>;
                     
                 }
             }
