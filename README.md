@@ -18,6 +18,7 @@ Dar Hodaya and Rivkas web service for Message app
 
 Start by cloning our project. Then make sure you use npm install command.
 Next, in cmd run our code by running npm start command in the cloned project path.
+Make sure to download npm install @microsoft/signalr.
 npm start runs the app in the development mode.
 Open [http://localhost:3000](http://localhost:3000) to view our app in your browser.
 
