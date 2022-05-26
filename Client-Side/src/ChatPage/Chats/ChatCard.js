@@ -8,10 +8,10 @@ import AttachRecording from './RecordAttachment';
 import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 
 
-function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn, userID}) {
+function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn, userID, usersArr}) {
     
     const showAllContactMesseges = async(id)=> {
-        console.log(id);
+        
         let j = new Array();
         await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
         .then(data => j = data);
@@ -58,27 +58,49 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
     
     const showNewMessage = async () => {
     
+        var doesExist = false;
+
+
+        if (usersArr) {
+        // to find the name of the id given for the contact to add
+        usersArr.forEach(element => {
+            if (element[0][0][1] === idGetter) {
+                doesExist = true;
+            }
+        });
+        if (doesExist) {
         // Simple POST request with a JSON body using fetch
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content: newMessage.current.value })
         };
-        console.log(idGetter + "contact");
+        
         await fetch('https://localhost:7105/api/Contacts/'+idGetter+'/messages', requestOptions)
         //await fetch('https://localhost:7105/api/Contacts/'+userID+'/messages', requestOptions)
-        console.log(userID + "user");
+    }
+    else{
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            // check which server needs to be in request
+            body: JSON.stringify({ from: idGetter, to: userID, content: newMessage.current.value })
+        };
+                await fetch('https://localhost:7105/api/Transfer/', requestOptions);
+    }
+        
         try {
             await myConn.invoke('Send', newMessage.current.value, contactId);
         }
         catch(e) {
             console.log(e);
         }
+    
             showAllContactMesseges(idGetter);
             //showAllContactMesseges(userID);
             showContacts();
          newMessage.current.value = "";
-    };
+    }};
     
     
     const formatTime = function(time) {
