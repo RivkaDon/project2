@@ -24,6 +24,8 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
             i++;
         });
         messageSetter(myArr);
+        
+        lastMessages.current = myArr;
         }
 
     const showContacts = async()=> {

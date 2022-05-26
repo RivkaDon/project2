@@ -11,6 +11,7 @@ import { NavLink } from 'react-router-dom';
 
 
 function ChatPage({}) {
+    const [getS, setS] = useState(0);
     const [getAllUsers, setAllUsers] = useState([]);
     // to get all users
     const getUsers = async()=> {
@@ -62,11 +63,15 @@ function ChatPage({}) {
                     
     
                     myConn.on('Receive',( message, theContactId, theUserId) => {
-                        if(currentUser === theContactId || currentUser === theUserId) {
+                       
+                        
+                            console.log("in if");
                             const updatedChat = [...latestMeseges.current];
-                            updatedChat.push(message);
+                            var arr1 = [['id', '9'],['content', message],
+                            ['created', '2022-05-26T23:39:09.8661885+03:00'],['sent', true]];
+                            updatedChat.push(arr1);
                             setMessages(updatedChat);
-                        }                                        
+                                                             
                     });
                 })
                 .catch(e => console.log('Connection failed: ', e));
@@ -194,6 +199,7 @@ function ChatPage({}) {
             myArr[i] = myMap.at(0);
             i++;
         });
+        latestMeseges.current = myArr;
         setMessages(myArr);
         setFlag(0);
         }
