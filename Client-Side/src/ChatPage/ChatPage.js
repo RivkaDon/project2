@@ -40,7 +40,7 @@ function ChatPage({}) {
         if (myConn) {
             myConn.start()
                 .then(result => {
-                    console.log('Connected!');
+                    
     
                     myConn.on('Receive',( message, theContactId, theUserId) => {
                         if(currentUser === theContactId || currentUser === theUserId) {
@@ -166,9 +166,10 @@ function ChatPage({}) {
             i++;
         });
         setMessages(myArr);
+        setFlag(0);
         }
         func()
-    }}, [setFlag(0)]);
+    }}, []);
         if(getFlag!= true)
         {
 

@@ -17,25 +17,24 @@ var passwordInput = "";
 
 function SignPage2() {
     const [isCorrect, setIsCorrect] = useState(false);
-    // to send username and password to server
-//     useEffect(()=>{
-//     console.log(userNameInput+','+passwordInput);
-    
-//     const func = async()=> {
-//     await fetch('https://localhost:7105/api/Users',{
-//     method: 'POST',
-//             headers:{'Content-type':'application/json'},
-//             body: {userNameInput, passwordInput}
-        //   }).then(r=>r.json()).then(res=>{
-        //     if(res){
-        //       console.log("yayyyy");
-        //     }
-        //     else {
-        //         console.log("noooo");
-        //     }
-//           });
-//     func()
-// }}, []);
+    // to get users list from server
+    const [getUsers, setUsers] = useState([]);
+    var j = new Array();
+        let myArr = new Array;
+        const func = async()=> {
+        await fetch('https://localhost:7105/api/Users', {method:'GET'}).then(response => response.json())
+        .then(data => j = data);
+       
+        let myMap;
+        var i = 0;
+        j.forEach(element => {
+            myMap = new Array(Object.entries(element));
+            myArr[i] = myMap;
+            i++;
+        });
+        setUsers(myArr);}
+        func();
+
 let componentDidMount;    
 function CheckInput(event) {
         // get values from the inputs.
@@ -63,6 +62,7 @@ function CheckInput(event) {
             const formControl = password.parentElement;
             formControl.className = 'form-control design';
         }
+        
         if (userNameInput !== '' && passwordInput !== '' && !isUser(userNameInput, passwordInput)) {
             setErrorFor(userName, 'User does not exist')
             setErrorFor(password, 'User does not exist');
@@ -79,14 +79,7 @@ function CheckInput(event) {
                 headers: { 'Content-Type': 'application/json' },
             };
             fetch('https://localhost:7105/api/Users/?id='+userNameInput+'&password='+passwordInput, requestOptions)
-                .then(res=>{
-                    if(res){
-                        console.log("yayyy");
-                    }
-                    else {
-                        console.log("noooo");
-                    };
-        })
+                
 }
 
     
@@ -98,8 +91,10 @@ function CheckInput(event) {
         formControl.className = 'form-control design error';
     }
 
+    
     const isUser = function (name, password) {
-        return usersList.some(code => { return (code.username === name && code.password === password); });
+        
+        return getUsers.some(code => { return (code.at(0).at(0).at(1) === name && code.at(0).at(2).at(1) === password); });
     }
 
 
