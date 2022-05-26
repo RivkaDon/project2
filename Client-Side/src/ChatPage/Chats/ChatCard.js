@@ -9,6 +9,37 @@ import AttachRecording from './RecordAttachment';
 
 function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn, userID}) {
     
+    const showAllContactMesseges = async(id)=> {
+        let j = new Array();
+        await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
+        .then(data => j = data);
+        let myMap;
+        let myArr = new Array;
+        var i = 0;
+        j.forEach(element => {
+            myMap = new Array(Object.entries(element));
+            myArr[i] = myMap.at(0);
+            i++;
+        });
+        messageSetter(myArr);
+        }
+
+    const showContacts = async()=> {
+        let j = new Array();    
+        await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
+            .then(data => j = data);
+           
+            let myMap;
+            let myArr = new Array;
+            var i = 0;
+            j.forEach(element => {
+                myMap = new Array(Object.entries(element));
+                myArr[i] = myMap;
+                i++;
+            });
+            contactListSetter(myArr);
+        }          
+    
     // in order to go to bottom of scrollbar after opening each chat so we can see the last messeges in convo
     const MyComponent = () => {
         const divRef = useRef(null);
@@ -31,9 +62,10 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content: newMessage.current.value })
         };
-        console.log(idGetter);
+        console.log(idGetter + "contact");
         await fetch('https://localhost:7105/api/Contacts/'+idGetter+'/messages', requestOptions)
         await fetch('https://localhost:7105/api/Contacts/'+userID+'/messages', requestOptions)
+        console.log(userID + "user");
         try {
             await myConn.invoke('Send', newMessage.current.value, contactId);
         }
@@ -41,37 +73,38 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
             console.log(e);
         }
 
-         var j = new Array();
-         const func = async()=> {
-            await fetch('https://localhost:7105/api/Contacts/'+idGetter+'/messages', {method:'GET'}).then(response => response.json())
-            .then(data => j = data);
-            let myMap;
-            let myArr = new Array;
-            var i = 0;
-            j.forEach(element => {
-                myMap = new Array(Object.entries(element));
-                myArr[i] = myMap.at(0);
-                i++;
-            });
-            messageSetter(myArr);
-            }
-            j = new Array();
-            const func1 = async()=> {
-                await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
-                .then(data => j = data);
+         
+        //  const func = async()=> {
+        //     await fetch('https://localhost:7105/api/Contacts/'+idGetter+'/messages', {method:'GET'}).then(response => response.json())
+        //     .then(data => j = data);
+        //     let myMap;
+        //     let myArr = new Array;
+        //     var i = 0;
+        //     j.forEach(element => {
+        //         myMap = new Array(Object.entries(element));
+        //         myArr[i] = myMap.at(0);
+        //         i++;
+        //     });
+        //     messageSetter(myArr);
+        //     }
+           // j = new Array();
+            // const func1 = async()=> {
+            //     await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
+            //     .then(data => j = data);
                
-                let myMap;
-                let myArr = new Array;
-                var i = 0;
-                j.forEach(element => {
-                    myMap = new Array(Object.entries(element));
-                    myArr[i] = myMap;
-                    i++;
-                });
-                contactListSetter(myArr);
-            }  
-            func();
-            func1();
+            //     let myMap;
+            //     let myArr = new Array;
+            //     var i = 0;
+            //     j.forEach(element => {
+            //         myMap = new Array(Object.entries(element));
+            //         myArr[i] = myMap;
+            //         i++;
+            //     });
+            //     contactListSetter(myArr);
+            // }  
+            showAllContactMesseges(idGetter);
+            showAllContactMesseges(userID);
+            showContacts();
          newMessage.current.value = "";
     };
     
