@@ -167,7 +167,7 @@ function ChatPage({}) {
         if(getFlag!= true)
         {
 
-            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} idGetter={getContactId} contactListSetter={setList} contactID={getContactId} myConn={myConn} />
+            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} idGetter={getContactId} contactListSetter={setList} contactID={getContactId} myConn={myConn} userID={currentUser} />
 
         }
     }
@@ -185,7 +185,7 @@ function ChatPage({}) {
                         <div type="button" className="btn">
                             <i className="bi bi-envelope-paper-heart-fill"></i>
                         </div>{getUsernameReturnNickName(currentUser)}
-                        <button type="button" id='rate' className="btn" >
+                        <button type="button" id='rate' className="btn" onClick={()=>NavLink("https://localhost:7136/")} >
                         <a href='https://localhost:7136/'><i className="bi bi-star"></i>Rate Us<i className="bi bi-star"></i></a>
                         </button>
                         <button type="button" id='addButton' className="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
