@@ -53,10 +53,11 @@ namespace WebAPI.Controllers
                     configuration["JWTParams:Issuer"],
                     configuration["JWTParams:Audience"],
                     claims,
-                    expires: DateTime.UtcNow.AddMinutes(20),
+                    expires: DateTime.UtcNow.AddMinutes(120), // ?
                     signingCredentials: mac);
 
                 Global.Id = id;
+                Global.Server = "localhost:7105";
 
                 return Ok(new JwtSecurityTokenHandler().WriteToken(token));
             } else

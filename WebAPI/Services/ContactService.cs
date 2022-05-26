@@ -56,16 +56,27 @@ namespace WebAPI.Services
         public void Delete(string id)
         {
             Contact contact = Get(id);
-            if (contact != null) userService.DeleteContact(contact);  // add else return 1 for 404
+            if (contact != null)
+            {
+                userService.DeleteContact(contact);  // add else return 1 for 404
+
+                IUserService us = new UserService(id);
+                User u = us.Get(id);
+                List<Contact> contacts = u.Contacts.Contacts;
+                Contact c = contacts.Find(c => c.Id == user.Id);
+                us.DeleteContact(c);
+            }
         }
 
         public void CreateContact(string id, string name, string server)
         {
             if (Exists(id)) return;
-            userService.CreateContact(id, name, server);
+            int num = userService.CreateContact(id, name, server);
+
+            if (num > 0) return; // return num
 
             IUserService us = new UserService(id);
-            us.CreateContact(user.Id, user.Name, server); // need to change this to the user's server
+            us.CreateContact(user.Id, user.Name, Global.Server);
         }
 
         public void UpdateLastDate(string id, List<Message> messages)

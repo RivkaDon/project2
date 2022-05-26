@@ -15,6 +15,20 @@ namespace WebAPI.Controllers
 
         private IInvitationService invitationService = new InvitationService();
 
+        private int updateChat(string from, string to, string content)
+        {
+            chatService = new ChatService(from);
+            Chat c = chatService.Get(to);
+
+            if (c != null && content != null)
+            {
+                IMessageService messageService = new MessageService(c);
+                messageService.SendMessage(content, false);
+                return 0;
+            }
+            return 1;
+        }
+
         /// <summary>
         /// Transfers a new message to one of the users.
         /// </summary>
@@ -46,7 +60,7 @@ namespace WebAPI.Controllers
             if (chat == null) // Checking if the contact exists (as one of the user's contacts).
             {
                 InvitationsController invitationsController = new InvitationsController();
-                RequestOfNewInvitation r = invitationService.Create(from, to, "localhost:7105");
+                RequestOfNewInvitation r = invitationService.Create(from, to, Global.Id);
 
                 invitationsController.Post(r); // Sending an invitation.
                 if (!invitationsController.invited)
@@ -60,6 +74,12 @@ namespace WebAPI.Controllers
 
             IMessageService messageService = new MessageService(chat, to);
             messageService.SendMessage(request.Content, true);
+
+            if (updateChat(from, to, request.Content) > 0)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
 
             Response.StatusCode = 201;
 

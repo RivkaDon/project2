@@ -34,6 +34,21 @@ namespace WebAPI.Controllers
             return 1;
         }
 
+        private int updateChat(string id, string content)
+        {
+            chatService = new ChatService(id);
+            Chat c = chatService.Get(Global.Id);
+
+            if (c != null && content != null)
+            {
+                messageService = new MessageService(c);
+                messageService.SendMessage(content, false);
+                chatService = new ChatService(Global.Id);
+                return 0;
+            }
+            return 1;
+        }
+
         /// <summary>
         /// Returns all contacts.
         /// </summary>
@@ -143,6 +158,12 @@ namespace WebAPI.Controllers
                 return;
             }
             messageService.SendMessage(request.Content, true);
+            
+            if (updateChat(id, request.Content) > 0)
+            {
+                Response.StatusCode = 404;
+            }
+
             Response.StatusCode = 201;
         }
 
