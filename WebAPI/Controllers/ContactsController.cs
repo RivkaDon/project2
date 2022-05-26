@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
 
         public ContactsController()
         {
-            Global.Id = "1"; // delete later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //Global.Id = "1"; // delete later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             Global.Server = "localhost:7105";
             contactService = new ContactService(Global.Id);
             chatService = new ChatService(Global.Id);
