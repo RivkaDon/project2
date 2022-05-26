@@ -105,11 +105,12 @@ namespace WebAPI.Services
                 chat.Messages.Add(message);
 
                 // Checking if the message was sent by the user (and not to the user).
-                if (sent)
+                chat.Contact.Last = message.Content;
+                chat.Contact.LastDate = message.Created;
+                /*if (sent)
                 {
-                    chat.Contact.Last = message.Content;
-                    chat.Contact.LastDate = message.Created;
-                }
+                    
+                }*/
             }
         }
     }
