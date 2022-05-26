@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
 
         public ContactsController()
         {
-            Global.Id = "harry"; // delete later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            Global.Id = "1"; // delete later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             Global.Server = "localhost:7105";
             contactService = new ContactService(Global.Id);
             chatService = new ChatService(Global.Id);
@@ -35,15 +35,30 @@ namespace WebAPI.Controllers
             return 1;
         }
 
-        private int updateChat(string id, string content)
+
+        private int updateChat(string action, string id1, string id2 = null, string content = null, DateTime? now = null)
         {
-            chatService = new ChatService(id);
+            chatService = new ChatService(id1);
             Chat c = chatService.Get(Global.Id);
 
-            if (c != null && content != null)
+            if (c != null)
             {
                 messageService = new MessageService(c);
-                messageService.SendMessage(content, false);
+
+                switch (action)
+                {
+                    case "post":
+                        //if (content == null) return 1;
+                        messageService.SendMessage(content, false);
+                        break;
+                    case "put":
+                        messageService.Edit(id2, false, content, now);
+                        break;
+                    case "delete":
+                        messageService.Delete(id2);
+                        break;
+                }
+                
                 chatService = new ChatService(Global.Id);
                 return 0;
             }
@@ -160,7 +175,7 @@ namespace WebAPI.Controllers
             }
             messageService.SendMessage(request.Content, true);
             
-            if (updateChat(id, request.Content) > 0)
+            if (updateChat("post", id, null, request.Content) > 0)
             {
                 Response.StatusCode = 404;
             }
@@ -204,7 +219,15 @@ namespace WebAPI.Controllers
                 Response.StatusCode = 404;
                 return;
             }
-            messageService.Edit(id2, true, request.Content, DateTime.Now);
+
+            DateTime now = DateTime.Now;
+            messageService.Edit(id2, true, request.Content, now);
+
+            if (updateChat("put", id1, id2, request.Content, now) > 0)
+            {
+                Response.StatusCode = 404;
+            }
+
             Response.StatusCode = 204;
 
         }
@@ -240,11 +263,16 @@ namespace WebAPI.Controllers
                 Response.StatusCode = 404;
                 return;
             }
-            
-            messageService.Delete(id2);
 
+            messageService.Delete(id2);
             List<Message> messages = messageService.GetAllMessages();
             contactService.UpdateLastDate(id1, messages);
+
+            if (updateChat("delete", id1, id2) > 0)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
 
             Response.StatusCode = 204;
         }
