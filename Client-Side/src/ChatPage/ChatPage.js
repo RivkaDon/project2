@@ -122,13 +122,7 @@ function ChatPage({}) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: newUserName.current.value })
         };
-        await fetch('https://localhost:7105/api/Contacts/', requestOptions).then(res=>{
-            if(res){
-                console.log("yipeeee");
-            }
-            else {
-                console.log("oooof");
-        };})
+        await fetch('https://localhost:7105/api/Contacts/', requestOptions);
         var j = new Array();
         const func = async()=> {
         await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
@@ -191,8 +185,8 @@ function ChatPage({}) {
                         <div type="button" className="btn">
                             <i className="bi bi-envelope-paper-heart-fill"></i>
                         </div>{getUsernameReturnNickName(currentUser)}
-                        <button type="button" id='rate' className="btn" onClick={()=>NavLink("https://localhost:7136/")} >
-                        <i className="bi bi-star"></i>Rate Us<i className="bi bi-star"></i>
+                        <button type="button" id='rate' className="btn" >
+                        <a href='https://localhost:7136/'><i className="bi bi-star"></i>Rate Us<i className="bi bi-star"></i></a>
                         </button>
                         <button type="button" id='addButton' className="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
                             <i className="bi bi-person-plus"></i>

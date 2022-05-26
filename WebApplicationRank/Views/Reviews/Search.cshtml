@@ -13,12 +13,19 @@
     }
 </style>
 <dev>Average Review Score: </dev>
-@foreach (var item in Model)
+@if (Model == null)
+{
+    <div>5</div>
+    average = 0;
+}
+else {
+foreach (var item in Model)
 {
     sum = item.Score + sum;
     count++;
 }
-@{average = sum/count;}
+average = sum/count;
+}
 <dev>@average</dev>
 <h1>Existing Reviews:</h1>
 
@@ -50,7 +57,13 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@if (Model == null)
+{
+    <div>5</div>
+    average = 0;
+}
+else {
+foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -70,6 +83,7 @@
                 <a asp-action="Delete" asp-route-id="@item.Name">Delete</a>
             </td>
         </tr>
+}
 }
     </tbody>
 </table>
