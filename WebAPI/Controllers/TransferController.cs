@@ -15,6 +15,20 @@ namespace WebAPI.Controllers
 
         private IInvitationService invitationService = new InvitationService();
 
+        private int updateChat(string from, string to, string content)
+        {
+            chatService = new ChatService(from);
+            Chat c = chatService.Get(to);
+
+            if (c != null && content != null)
+            {
+                IMessageService messageService = new MessageService(c);
+                messageService.SendMessage(content, false);
+                return 0;
+            }
+            return 1;
+        }
+
         /// <summary>
         /// Transfers a new message to one of the users.
         /// </summary>
@@ -25,17 +39,16 @@ namespace WebAPI.Controllers
             string from = request.From;
             string to = request.To;
 
-            userService = new UserService(to);
-
-            User user1 = userService.Get(to);
-            if (user1 == null)
+            if (from == to)
             {
                 Response.StatusCode = 404;
                 return;
-            } // Checking if the user exists.
+            }
 
-            User user2 = userService.Get(from);
-            if (user2 == null)
+            userService = new UserService(to);
+
+            User user1 = userService.Get(to);
+            if (user1 == null) // Checking if the user exists.
             {
                 Response.StatusCode = 404;
                 return;
@@ -47,24 +60,26 @@ namespace WebAPI.Controllers
             if (chat == null) // Checking if the contact exists (as one of the user's contacts).
             {
                 InvitationsController invitationsController = new InvitationsController();
-                RequestOfNewInvitation r = invitationService.Create(from, to, "localhost:7105");
+                RequestOfNewInvitation r = invitationService.Create(from, to, Global.Id);
 
                 invitationsController.Post(r); // Sending an invitation.
-                // chatService.CreateChat(to, user2.Name, r.Server);
+                if (!invitationsController.invited)
+                {
+                    Response.StatusCode = 404;
+                    return;
+                }
+                invitationsController.invited = false;
                 chat = chatService.Get(from);
             }
 
             IMessageService messageService = new MessageService(chat, to);
             messageService.SendMessage(request.Content, true);
 
-            /*if (to == Global.Id)
+            if (updateChat(from, to, request.Content) > 0)
             {
-                messageService.SendMessage(request.Content, true);
-            } else
-            {
-                messageService.SendMessage(request.Content, false);
-            }*/
-
+                Response.StatusCode = 404;
+                return;
+            }
 
             Response.StatusCode = 201;
 

@@ -90,16 +90,6 @@ namespace WebAPI.Services
             }
         }
 
-        /*public void sendTo(string id, string content)
-        {
-            User user = userService.Get(id);
-            if (user == null) return; // Checking if the user exists
-
-            userService.updateUser(id, chat.Contact, content, DateTime.Now);
-
-            SendMessage(content, false);
-        }*/
-
         public void SendMessage(string content, bool sent)
         {
             if (content != null)
@@ -114,7 +104,7 @@ namespace WebAPI.Services
 
                 chat.Messages.Add(message);
 
-                // Checking is the message was sent by the user (and not to the user).
+                // Checking if the message was sent by the user (and not to the user).
                 if (sent)
                 {
                     chat.Contact.Last = message.Content;

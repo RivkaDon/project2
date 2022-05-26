@@ -6,7 +6,8 @@ import AttachVideo from './VideoAttachment';
 import AttachSound from './SoundAttachment';
 import AttachRecording from './RecordAttachment';
 
-function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, latestMeseges, idGetter, contactListSetter}) {
+
+function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn}) {
     
     // in order to go to bottom of scrollbar after opening each chat so we can see the last messeges in convo
     const MyComponent = () => {
@@ -20,6 +21,7 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
       }
     const [getMessage, setMessage] = useState(0);
     const newMessage = useRef();
+
     
     const showNewMessage = async () => {
     
@@ -30,6 +32,12 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
             body: JSON.stringify({ content: newMessage.current.value })
         };
         await fetch('https://localhost:7105/api/Contacts/'+idGetter+'/messages', requestOptions)
+        try {
+            await myConn.invoke('Send', newMessage.current.value, contactId);
+        }
+        catch(e) {
+            console.log(e);
+        }
 
          var j = new Array();
          const func = async()=> {
