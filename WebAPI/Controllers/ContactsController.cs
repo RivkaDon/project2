@@ -192,15 +192,24 @@ namespace WebAPI.Controllers
         public void Put(string id, [FromBody] RequestEditContact request)
         {
             Contact contact = contactService.Get(id);
-            if (contact == null)
+            if (contact != null)
             {
-                Response.StatusCode = 404;
+                if (contactService.Edit(id, request.Name, request.Server) > 0)
+                {
+                    Response.StatusCode = 404;
+                    return;
+                }
+
+                if (chatService.Edit(id, contact) > 0)
+                {
+                    Response.StatusCode = 404;
+                    return;
+                }
+                Response.StatusCode = 204;
                 return;
             }
 
-            contactService.Edit(id, request.Name, request.Server);
-            chatService.Edit(id, contact);
-            Response.StatusCode = 204;
+            Response.StatusCode = 404;
         }
 
         /// <summary>
@@ -239,12 +248,11 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(string id)
         {
-            if (chatService.Get(id) == null)
+            if (chatService.Delete(id) > 0)
             {
                 Response.StatusCode = 404;
                 return;
             }
-            chatService.Delete(id);
             Response.StatusCode = 204;
         }
 
