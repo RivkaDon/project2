@@ -18,15 +18,10 @@ namespace WebAPI.Controllers
 
         public ContactsController()
         {
-            Global.Id = "1"; // delete later!
+            Global.Id = "1"; // delete later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             contactService = new ContactService(Global.Id);
             chatService = new ChatService(Global.Id);
         }
-
-        /*private void setChatService(string id)
-        {
-            chatService = new ChatService(id);
-        }*/
 
         private int setMessageService(string id)
         {
@@ -34,6 +29,21 @@ namespace WebAPI.Controllers
             if (c != null)
             {
                 messageService = new MessageService(c);
+                return 0;
+            }
+            return 1;
+        }
+
+        private int updateChat(string id, string content)
+        {
+            chatService = new ChatService(id);
+            Chat c = chatService.Get(Global.Id);
+
+            if (c != null && content != null)
+            {
+                messageService = new MessageService(c);
+                messageService.SendMessage(content, false);
+                chatService = new ChatService(Global.Id);
                 return 0;
             }
             return 1;
@@ -137,7 +147,8 @@ namespace WebAPI.Controllers
         /// <summary>
         /// Creates new message.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="id"></param>
+        /// <param name="request"></param>
         [HttpPost("{id}/messages")]
         public void Post(string id, [FromBody] RequestCreationOfNewMessage request)
         {
@@ -147,6 +158,12 @@ namespace WebAPI.Controllers
                 return;
             }
             messageService.SendMessage(request.Content, true);
+            
+            if (updateChat(id, request.Content) > 0)
+            {
+                Response.StatusCode = 404;
+            }
+
             Response.StatusCode = 201;
         }
 
@@ -166,8 +183,6 @@ namespace WebAPI.Controllers
             }
 
             contactService.Edit(id, request.Name, request.Server);
-            
-            // setChatService(Global.Id);
             chatService.Edit(id, contact);
             Response.StatusCode = 204;
         }

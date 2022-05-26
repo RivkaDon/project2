@@ -50,10 +50,7 @@ namespace WebAPI.Services
 
         public void Delete(string id)
         {
-            if (Exists(id))
-            {
-                GetAllUsers().Remove(Get(id));
-            }
+            if (Exists(id)) GetAllUsers().Remove(Get(id));
         }
 
         public int CreateUser(string id, string name, string password)
@@ -68,15 +65,8 @@ namespace WebAPI.Services
 
         public int CreateContact(string id, string name, string server)
         {
-            
-            //if (Exists(id)) return 1;
-            // User user = Get(id);
             if (user != null)
             {
-                /*if (user.Contacts == null)
-                {
-                    user.Contacts = new ContactList();
-                }*/
                 Contact contact = new Contact()
                 {
                     Id = id,
@@ -122,13 +112,11 @@ namespace WebAPI.Services
 
         public void DeleteContact(Contact contact)
         {
-            // User user = Get(id);
             users.DeleteContact(user, contact);
         }
 
         public void DeleteChat(Chat chat)
         {
-            // User user = Get(id);
             DeleteContact(chat.Contact);
             users.DeleteChat(user, chat);
         }
