@@ -31,7 +31,22 @@ namespace WebAPI.Controllers
             return user.Password == password;
         }
 
-        // POST: UsersController/Post
+        /// <summary>
+        /// Returns all users - for Rivka.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public List<User> Get()
+        {
+            return userService.GetAllUsers();
+        }
+
+        /// <summary>
+        /// Login.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         [HttpPost]
         //[ValidateAntiForgeryToken]
         public IActionResult Post(string id, string password)
