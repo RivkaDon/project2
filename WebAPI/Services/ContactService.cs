@@ -64,9 +64,12 @@ namespace WebAPI.Services
 
                 IUserService us = new UserService(id);
                 User u = us.Get(id);
-                List<Contact> contacts = u.Contacts.Contacts;
-                Contact c = contacts.Find(c => c.Id == user.Id);
-                us.DeleteContact(c);
+                if (u != null)
+                {
+                    List<Contact> contacts = u.Contacts.Contacts;
+                    Contact c = contacts.Find(c => c.Id == user.Id);
+                    us.DeleteContact(c);
+                }
 
                 return 0;
             }
