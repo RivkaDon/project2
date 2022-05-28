@@ -15,7 +15,7 @@
 <dev>Average Review Score: </dev>
 @if (Model == null)
 {
-    <div>5</div>
+    <div>The query searched doesn't exist in review database</div>
     average = 0;
 }
 else {
@@ -59,7 +59,7 @@ average = sum/count;
     <tbody>
 @if (Model == null)
 {
-    <div>5</div>
+    <div>The query searched doesn't exist in review database</div>
     average = 0;
 }
 else {

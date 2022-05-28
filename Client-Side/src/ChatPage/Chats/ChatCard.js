@@ -5,11 +5,13 @@ import './ChatCard.css'
 import AttachVideo from './VideoAttachment';
 import AttachSound from './SoundAttachment';
 import AttachRecording from './RecordAttachment';
+import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 
 
-function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn, userID}) {
+function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn, userID, usersArr}) {
     
     const showAllContactMesseges = async(id)=> {
+        
         let j = new Array();
         await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
         .then(data => j = data);
@@ -56,57 +58,49 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
     
     const showNewMessage = async () => {
     
+        var doesExist = false;
+
+
+        if (usersArr) {
+        // to find the name of the id given for the contact to add
+        usersArr.forEach(element => {
+            if (element[0][0][1] === idGetter) {
+                doesExist = true;
+            }
+        });
+        if (doesExist) {
         // Simple POST request with a JSON body using fetch
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content: newMessage.current.value })
         };
-        console.log(idGetter + "contact");
+        
         await fetch('https://localhost:7105/api/Contacts/'+idGetter+'/messages', requestOptions)
-        await fetch('https://localhost:7105/api/Contacts/'+userID+'/messages', requestOptions)
-        console.log(userID + "user");
+        //await fetch('https://localhost:7105/api/Contacts/'+userID+'/messages', requestOptions)
+    }
+    else{
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            // check which server needs to be in request
+            body: JSON.stringify({ from: idGetter, to: userID, content: newMessage.current.value })
+        };
+                await fetch('https://localhost:7105/api/Transfer/', requestOptions);
+    }
+        
         try {
             await myConn.invoke('Send', newMessage.current.value, contactId);
         }
         catch(e) {
             console.log(e);
         }
-
-         
-        //  const func = async()=> {
-        //     await fetch('https://localhost:7105/api/Contacts/'+idGetter+'/messages', {method:'GET'}).then(response => response.json())
-        //     .then(data => j = data);
-        //     let myMap;
-        //     let myArr = new Array;
-        //     var i = 0;
-        //     j.forEach(element => {
-        //         myMap = new Array(Object.entries(element));
-        //         myArr[i] = myMap.at(0);
-        //         i++;
-        //     });
-        //     messageSetter(myArr);
-        //     }
-           // j = new Array();
-            // const func1 = async()=> {
-            //     await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
-            //     .then(data => j = data);
-               
-            //     let myMap;
-            //     let myArr = new Array;
-            //     var i = 0;
-            //     j.forEach(element => {
-            //         myMap = new Array(Object.entries(element));
-            //         myArr[i] = myMap;
-            //         i++;
-            //     });
-            //     contactListSetter(myArr);
-            // }  
+    
             showAllContactMesseges(idGetter);
-            showAllContactMesseges(userID);
+            //showAllContactMesseges(userID);
             showContacts();
          newMessage.current.value = "";
-    };
+    }};
     
     
     const formatTime = function(time) {
@@ -121,11 +115,11 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
                 if (element[3][1])
                 {
                 return <div key={element[0][1]} className="sent"><div className="badge bg-secondary ">{element[1][1]}
-                <div className="dateAndTime">{formatTime(element[2][1])}</div></div></div>;
+                <div className="dateAndTime">{element[2][1]}</div></div></div>;
                 }
                 else {
                 return <div key={element[0][1]} className="recieved"><div className="badge bg-secondary ">{element[1][1]}
-                        <div className="dateAndTime">{formatTime(element[2][1])}</div></div></div>;
+                        <div className="dateAndTime">{element[2][1]}</div></div></div>;
                     
                 }
             }
