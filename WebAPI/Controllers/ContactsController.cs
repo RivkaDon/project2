@@ -15,10 +15,10 @@ namespace WebAPI.Controllers
         private IContactService contactService;
         private IChatService chatService;
         private IMessageService messageService;
+        private IUserService userService = new UserService();
 
         public ContactsController()
         {
-            //Global.Id = "1"; // delete later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             Global.Server = "localhost:7105";
             contactService = new ContactService(Global.Id);
             chatService = new ChatService(Global.Id);
@@ -49,10 +49,10 @@ namespace WebAPI.Controllers
                 {
                     case "post":
                         //if (content == null) return 1;
-                        messageService.SendMessage(content, false);
+                        messageService.SendMessage(content, true);
                         break;
                     case "put":
-                        messageService.Edit(id2, false, content, now);
+                        messageService.Edit(id2, true, content, now);
                         break;
                     case "delete":
                         messageService.Delete(id2);
@@ -62,6 +62,7 @@ namespace WebAPI.Controllers
                 chatService = new ChatService(Global.Id);
                 return 0;
             }
+            if (!userService.Exists(id1)) return 0;
             return 1;
         }
 

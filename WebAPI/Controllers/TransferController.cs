@@ -15,6 +15,11 @@ namespace WebAPI.Controllers
 
         private IInvitationService invitationService = new InvitationService();
 
+        public TransferController()
+        {
+            Global.Server = "localhost:7105";
+        }
+
         private int updateChat(string from, string to, string content)
         {
             chatService = new ChatService(from);
@@ -26,6 +31,7 @@ namespace WebAPI.Controllers
                 messageService.SendMessage(content, false);
                 return 0;
             }
+            if (!userService.Exists(from)) return 0;
             return 1;
         }
 
@@ -60,7 +66,7 @@ namespace WebAPI.Controllers
             if (chat == null) // Checking if the contact exists (as one of the user's contacts).
             {
                 InvitationsController invitationsController = new InvitationsController();
-                RequestOfNewInvitation r = invitationService.Create(from, to, Global.Id);
+                RequestOfNewInvitation r = invitationService.Create(from, to, Global.Server);
 
                 invitationsController.Post(r); // Sending an invitation.
                 if (!invitationsController.invited)
@@ -73,7 +79,7 @@ namespace WebAPI.Controllers
             }
 
             IMessageService messageService = new MessageService(chat, to);
-            messageService.SendMessage(request.Content, true);
+            messageService.SendMessage(request.Content, false);
 
             if (updateChat(from, to, request.Content) > 0)
             {

@@ -73,9 +73,12 @@ namespace WebAPI.Services
 
                 IUserService us = new UserService(id);
                 User u = us.Get(id);
-                List<Chat> chats = u.Chats.Chats;
-                Chat c = chats.Find(c => c.Id == user.Id);
-                us.DeleteChat(c);
+                if (u != null)
+                {
+                    List<Chat> chats = u.Chats.Chats;
+                    Chat c = chats.Find(c => c.Id == user.Id);
+                    us.DeleteChat(c);
+                }
 
                 return 0;
             }

@@ -5,6 +5,7 @@ namespace WebAPI.Services
     public interface IUserService
     {
         public List<User> GetAllUsers();
+        public bool Exists(string id);
         public User Get(string id);
         public void Edit(string id, string name = null, string password = null);
         public void Delete(string id);
