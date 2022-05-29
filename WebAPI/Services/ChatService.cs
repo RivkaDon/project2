@@ -66,51 +66,57 @@ namespace WebAPI.Services
             return 1;
         }
 
-        public int Delete(string id)
+        public int Delete(string id1, string id2)
         {
-            Chat chat = Get(Global.Id, id);
+            Chat chat = Get(id1, id2);
             if (chat != null)
             {
-                userService.DeleteChat(chat); // add else return 1 for 404
-
-                /*IUserService us = new UserService();
-                User u = us.Get(id);
+                userService.DeleteChat(id1, chat); // add else return 1 for 404
+                
+                User u = userService.Get(id1);
                 if (u != null)
                 {
                     List<Chat> chats = u.Chats.Chats;
-                    User user = userService.Get(Global.Id);
+                    User user = userService.Get(id2);
                     Chat c = chats.Find(c => c.Id == user.Id);
-                    us.DeleteChat(c);
-                }*/
+                    userService.DeleteChat(id2, c);
+                }
                 return 0;
             }
             return 1;
         }
 
-        public int CreateChat(string id, string name, string server)
+        public int CreateChat(string id1, string id2, string name, string server)
         {
-            if (Exists(Global.Id, id)) return 1;
+            if (id1 == null || id2 == null) return 1;
+            if (id1 == id2) return 1;
 
-            User user = userService.Get(Global.Id);
-            if (id == user.Id) return 1;
-            int num = userService.CreateChat(id, name, server);
+            if (Exists(id1, id2)) return 1;
+
+            User user = userService.Get(id1);
+            int num = userService.CreateChat(id1, id2, name, server);
 
             if (num > 0) return num;
 
+            userService.CreateChat(id2, id1, user.Name, server);
             /*IUserService us = new UserService();
             us.CreateChat(user.Id, user.Name, Global.Server);*/
             return 0;
         }
 
-        public int CreateChatInvitation(string id, string name, string server)
+        public int CreateChatInvitation(string id1, string id2, string name, string server)
         {
-            if (Exists(Global.Id, id)) return 1;
+            if (id1 == null || id2 == null) return 1;
+            if (id1 == id2) return 1;
+
+            if (Exists(id1, id2)) return 1;
 
             User user = userService.Get(Global.Id);
-            if (id == user.Id) return 1;
-            int num = userService.CreateChatInvitation(id, name, server);
+            int num = userService.CreateChatInvitation(id1, id2, name, server);
 
             if (num > 0) return num;
+
+            userService.CreateChatInvitation(id2, id1, user.Name, server);
 
             /*IUserService us = new UserService();
             us.CreateChatInvitation(user.Id, user.Name, Global.Server);*/

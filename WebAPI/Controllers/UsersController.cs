@@ -78,7 +78,7 @@ namespace WebAPI.Controllers
                 Token tok = new Token();
                 tok.Data = new JwtSecurityTokenHandler().WriteToken(token);
 
-                return Ok(tok);
+                return Ok(new JwtSecurityTokenHandler().WriteToken(token));
             } else
             {
                 return BadRequest();

@@ -27,7 +27,7 @@ namespace WebAPI.Services
                 RequestOfNewInvitation r = invitationService.Create(from.Id, to.Id, "localhost:7105");
 
                 invitationsController.Post(r); // Sending an invitation.
-                chatService.CreateChat(to.Id, to.Name, r.Server);
+                chatService.CreateChat(from.Id, to.Id, to.Name, r.Server);
             }
         }
     }

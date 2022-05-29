@@ -88,7 +88,7 @@ namespace WebAPI.Services
                 Chat chat = chatService.Get(id1, id2);
 
                 Message message = new Message();
-                int len = GetAllMessages(id2).Count;
+                int len = GetAllMessages(id2).Count; // 
 
                 message.Id = lastId(id2) + len;
                 message.Created = DateTime.Now;

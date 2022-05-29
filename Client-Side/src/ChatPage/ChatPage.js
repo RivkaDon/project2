@@ -90,7 +90,7 @@ function ChatPage({}) {
     useEffect(()=>{
         var j = new Array();
         const func = async()=> {
-        console.log(token);    
+            console.log(token + "--------------------");    
         await fetch('https://localhost:7105/api/Contacts', {method:'GET'
         , headers: {
             "Authorization" : "Bearer " + token
