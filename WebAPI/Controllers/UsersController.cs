@@ -77,7 +77,10 @@ namespace WebAPI.Controllers
                 Global.Id = id;
                 Global.Server = "localhost:7105";
 
-                return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+                Token tok = new Token();
+                tok.Token = new JwtSecurityTokenHandler().WriteToken(token);
+
+                return Ok(tok);
             } else
             {
                 return BadRequest();
