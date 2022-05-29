@@ -5,22 +5,17 @@ namespace WebAPI.Services
     public class ChatService : IChatService
     {
         private IUserService userService;
-        private User user;
+        //private User user;
 
         public ChatService()
         {
             userService = new UserService();
-            user = userService.Get(Global.Id);
-        }
-
-        public ChatService(string id)
-        {
-            userService = new UserService(id);
-            user = userService.Get(id);
+            //user = userService.Get(id);
         }
 
         public List<Chat> GetAllChats()
         {
+            User user = userService.Get(Global.Id);
             if (user == null) return null;
             if (user.Chats == null) return null;
             return user.Chats.Chats;
@@ -58,6 +53,7 @@ namespace WebAPI.Services
             Chat chat = Get(id);
             if (chat != null)
             {
+                User user = userService.Get(Global.Id);
                 user.Chats.Edit(chat, contact, messageList);
                 return 0;
             }
@@ -71,30 +67,31 @@ namespace WebAPI.Services
             {
                 userService.DeleteChat(chat); // add else return 1 for 404
 
-                IUserService us = new UserService(id);
+                IUserService us = new UserService();
                 User u = us.Get(id);
                 if (u != null)
                 {
                     List<Chat> chats = u.Chats.Chats;
+                    User user = userService.Get(Global.Id);
                     Chat c = chats.Find(c => c.Id == user.Id);
                     us.DeleteChat(c);
                 }
-
                 return 0;
             }
-
             return 1;
         }
 
         public int CreateChat(string id, string name, string server)
         {
             if (Exists(id)) return 1;
+
+            User user = userService.Get(Global.Id);
             if (id == user.Id) return 1;
             int num = userService.CreateChat(id, name, server);
 
             if (num > 0) return num;
 
-            IUserService us = new UserService(id);
+            IUserService us = new UserService();
             us.CreateChat(user.Id, user.Name, Global.Server);
             return 0;
         }
@@ -102,12 +99,14 @@ namespace WebAPI.Services
         public int CreateChatInvitation(string id, string name, string server)
         {
             if (Exists(id)) return 1;
+
+            User user = userService.Get(Global.Id);
             if (id == user.Id) return 1;
             int num = userService.CreateChatInvitation(id, name, server);
 
             if (num > 0) return num;
 
-            IUserService us = new UserService(id);
+            IUserService us = new UserService();
             us.CreateChatInvitation(user.Id, user.Name, Global.Server);
             return 0;
         }

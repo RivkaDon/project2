@@ -4,17 +4,12 @@ namespace WebAPI.Services
 {
     public class UserService : IUserService
     {
-        private static UserList users = new UserList();
-        private User user;
+        private static UserList users;
+        //private User user;
 
         public UserService()
         {
-            user = Get(Global.Id);
-        }
-
-        public UserService(string id)
-        {
-            user = Get(id);
+            users = new UserList();
         }
 
         public List<User> GetAllUsers()
@@ -65,6 +60,7 @@ namespace WebAPI.Services
 
         public int CreateContact(string id, string name, string server)
         {
+            User user = Get(Global.Id);
             if (user != null)
             {
                 Contact contact = new Contact()
@@ -112,11 +108,13 @@ namespace WebAPI.Services
 
         public void DeleteContact(Contact contact)
         {
+            User user = Get(Global.Id);
             users.DeleteContact(user, contact);
         }
 
         public void DeleteChat(Chat chat)
         {
+            User user = Get(Global.Id);
             DeleteContact(chat.Contact);
             users.DeleteChat(user, chat);
         }
