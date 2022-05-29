@@ -41,7 +41,6 @@ namespace WebAPI.Controllers
 
         private int updateChat(string action, string id1, string id2 = null, string content = null, DateTime? now = null)
         {
-            chatService = new ChatService();
             Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
             Chat c = chatService.Get(Global.Id); // Global.id
 
@@ -78,6 +77,7 @@ namespace WebAPI.Controllers
         public List<Contact> Get()
         {
             Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            contactService = new ContactService(Global.Id);
             Response.StatusCode = 200;
             return contactService.GetAllContacts();
         }
@@ -91,6 +91,7 @@ namespace WebAPI.Controllers
         public Contact Get(string id)
         {
             Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            contactService = new ContactService(Global.Id);
             Contact contact = contactService.Get(id);
             if (contact == null)
             {
@@ -279,6 +280,8 @@ namespace WebAPI.Controllers
         public void Delete(string id1, string id2)
         {
             Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            contactService = new ContactService(Global.Id);
+
             bool b1 = setMessageService(id1) > 0;
             bool b2 = messageService.Get(id2) == null;
             if (b1 || b2)
