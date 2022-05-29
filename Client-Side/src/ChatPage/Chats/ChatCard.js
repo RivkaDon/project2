@@ -62,13 +62,15 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
       }
     const [getMessage, setMessage] = useState(0);
     const newMessage = useRef();
-
+    const usersRef = useRef([]);
     
     const showNewMessage = async () => {
-    
+        
+        
         var doesExist = false;
 
 
+        console.log(usersArr)
         if (usersArr) {
         // to find the name of the id given for the contact to add
         usersArr.forEach(element => {
