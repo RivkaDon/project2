@@ -78,8 +78,8 @@ function ChatPage({}) {
                         if(currentUser === mc.Contact || currentUser === mc.UserId) {
                             console.log("in if");
                             const updatedChat = [...latestMeseges.current];
-                            var arr1 = [['id', '9'],['content', message],
-                            ['created', '2022-05-26T23:39:09.8661885+03:00'],['sent', true]];
+                            var arr1 = [['id', mc.Contact],['content', mc.Message.Content],
+                            ['created', mc.Message.Created],['sent', true]];
                             updatedChat.push(mc);
                             setMessages(updatedChat);
                         }                       

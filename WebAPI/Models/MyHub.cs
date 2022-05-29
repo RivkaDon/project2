@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using WebAPI.Services;
 
 namespace WebAPI.Models
 {
@@ -6,7 +7,8 @@ namespace WebAPI.Models
     {
         public async Task Send(string contactId, string stringMessage, string time, string sent)
         {
-            Message message = 
+            MessageService ms = new MessageService();
+            Message message = ms.Get(contactId, Global.Id);
             MessageWithContact mc = new MessageWithContact();
             mc.Contact = contactId;
             mc.Message = message;

@@ -102,7 +102,8 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
     }
         
         try {
-            await myConn.invoke('Send', newMessage.current.value, contactId);
+            console.log("id getter000= " + idGetter);
+            await myConn.invoke('Send', newMessage.current.value, idGetter);
         }
         catch(e) {
             console.log(e);
