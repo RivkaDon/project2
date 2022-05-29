@@ -16,13 +16,16 @@ var passwordInput = "";
 
 
 function SignPage2() {
-    var token = "";
+    
+    var token = useRef("");
     const [isCorrect, setIsCorrect] = useState(false);
     // to get users list from server
     const [getUsers, setUsers] = useState([]);
     var j = new Array();
         let myArr = new Array;
-        const func = async()=> {
+        useEffect(()=> {
+        async function recieveUsers()
+         {
         await fetch('https://localhost:7105/api/Users', {method:'GET'}).then(response => response.json())
         .then(data => j = data);
 
@@ -33,8 +36,8 @@ function SignPage2() {
             myArr[i] = myMap;
             i++;
         });
-        setUsers(myArr);}
-        func();
+        setUsers(myArr);} recieveUsers();}, [])
+        
 
 let componentDidMount;    
 function CheckInput(event) {
@@ -78,7 +81,10 @@ function CheckInput(event) {
                 headers: { 'Content-Type': 'application/json' },
             };
             fetch('https://localhost:7105/api/Users/?id='+userNameInput+'&password='+passwordInput, requestOptions)
-            .then(res=> res.text()).then(tok=>{token = tok;
+            .then(res=>{ var t = res.text();
+            console.log(t+","+res);
+        return t}).then(tok=>{token.current = tok;
+                console.log(token.current);
                 if (flag === true) {
                     setIsCorrect(true);
                 }});
@@ -103,7 +109,7 @@ function CheckInput(event) {
     return (
         <div id='containerAll'>
             {(isCorrect) ?
-                (<Navigate to="/chat" state={userNameInput} token={token} />) :
+                (<Navigate to="/chat" state={userNameInput} token={token.current} />) :
                 (
                     <div className="container" id='container'>
                         <div className="header">
