@@ -13,8 +13,8 @@ import { NavLink } from 'react-router-dom';
 function ChatPage({}) {
     
     const location = useLocation();
-    var currentUser = location.state;
-    var token = location.token;
+    var currentUser = location.state.userNameInput;
+    var token = location.state.token;
 
     const [getS, setS] = useState(0);
     const [getAllUsers, setAllUsers] = useState([]);

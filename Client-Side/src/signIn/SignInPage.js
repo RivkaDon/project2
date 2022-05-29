@@ -109,7 +109,7 @@ function CheckInput(event) {
     return (
         <div id='containerAll'>
             {(isCorrect) ?
-                (<Navigate to="/chat" state={userNameInput} token={token.current} />) :
+                (<Navigate to="/chat" state={{"userNameInput": userNameInput, "token": token.current}} />) :
                 (
                     <div className="container" id='container'>
                         <div className="header">
