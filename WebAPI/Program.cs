@@ -6,12 +6,14 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using WebAPI.Data;
 using WebAPI.Models;
+using WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<WebAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("WebAPIContext") ?? throw new InvalidOperationException("Connection string 'WebAPIContext' not found.")));
-
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 // Add services to the container.
 
 builder.Services.AddControllers();

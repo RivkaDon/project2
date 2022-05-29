@@ -12,21 +12,22 @@
     background-color:hotpink;
     }
 </style>
-<dev>Average Review Score: </dev>
+
 @if (Model == null)
 {
-    <div>The query searched doesn't exist in review database</div>
-    average = 0;
+    <div></div>
+    
 }
 else {
+<dev>Average Review Score: </dev>
 foreach (var item in Model)
 {
     sum = item.Score + sum;
     count++;
 }
 average = sum/count;
-}
 <dev>@average</dev>
+}
 <h1>Existing Reviews:</h1>
 
 <p>

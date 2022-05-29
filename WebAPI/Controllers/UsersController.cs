@@ -16,9 +16,10 @@ namespace WebAPI.Controllers
         public IConfiguration configuration;
         private IUserService userService;
 
-        public UsersController(IConfiguration config)
+        public UsersController(IConfiguration config, IUserService us)
         {
             configuration = config; // allows to get to appsettings.json (which is a configuration file)
+            userService = us;
         }
 
         private bool validate(string id, string password)
@@ -51,8 +52,6 @@ namespace WebAPI.Controllers
         //[ValidateAntiForgeryToken]
         public IActionResult Post(string id, string password)
         {
-            userService = new UserService();
-
             if (validate(id, password)) // Checking if this id exists, and if the password is the right password.
             {
                 var claims = new[]
@@ -75,6 +74,9 @@ namespace WebAPI.Controllers
 
                 Global.Id = id;
                 Global.Server = "localhost:7105";
+
+                Token tok = new Token();
+                tok.Data = new JwtSecurityTokenHandler().WriteToken(token);
 
                 return Ok(new JwtSecurityTokenHandler().WriteToken(token));
             } else

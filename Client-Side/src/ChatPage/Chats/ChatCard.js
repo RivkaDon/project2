@@ -8,12 +8,15 @@ import AttachRecording from './RecordAttachment';
 import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 
 
-function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn, userID, usersArr}) {
+
+function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn, userID, usersArr, token}) {
     
     const showAllContactMesseges = async(id)=> {
-        
         let j = new Array();
-        await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
+        await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'
+        , headers: {
+            "Authorization" : "Bearer " + token
+        }}).then(response => response.json())
         .then(data => j = data);
         let myMap;
         let myArr = new Array;
@@ -24,11 +27,16 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
             i++;
         });
         messageSetter(myArr);
+        
+        lastMessages.current = myArr;
         }
 
     const showContacts = async()=> {
         let j = new Array();    
-        await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
+        await fetch('https://localhost:7105/api/Contacts', {method:'GET'
+        , headers: {
+            "Authorization" : "Bearer " + token
+        }}).then(response => response.json())
             .then(data => j = data);
            
             let myMap;
@@ -54,13 +62,15 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
       }
     const [getMessage, setMessage] = useState(0);
     const newMessage = useRef();
-
+    const usersRef = useRef([]);
     
     const showNewMessage = async () => {
-    
+        
+        
         var doesExist = false;
 
 
+        console.log(usersArr)
         if (usersArr) {
         // to find the name of the id given for the contact to add
         usersArr.forEach(element => {
@@ -72,7 +82,9 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
         // Simple POST request with a JSON body using fetch
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json',
+                "Authorization" : "Bearer " + token
+             },
             body: JSON.stringify({ content: newMessage.current.value })
         };
         
@@ -90,7 +102,9 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
     }
         
         try {
-            await myConn.invoke('Send', newMessage.current.value, contactId);
+            console.log("id getter000= " + idGetter);
+            await myConn.invoke('Send', idGetter);
+            //await myConn.invoke('Send', newMessage.current.value, idGetter);
         }
         catch(e) {
             console.log(e);

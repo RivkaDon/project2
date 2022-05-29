@@ -43,7 +43,7 @@ namespace WebAPI.Services
             if (contact != null) return 1; // Checking if the contact already exists (as one of the user's contacts).
 
             chatService = new ChatService();
-            if (chatService.CreateChatInvitation(from, from, server) > 0) return 1;
+            if (chatService.CreateChatInvitation(to, from, from, server) > 0) return 1;
 
             return 0;
         }
