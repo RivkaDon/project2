@@ -4,9 +4,14 @@ namespace WebAPI.Models
 {
     public class MyHub : Hub
     {
-        public async Task Send(string message, string contactId)
+        public async Task Send(string contactId, string stringMessage, string time, string sent)
         {
-            await Clients.All.SendAsync("Receive", message, contactId, Global.Id);
+            Message message = 
+            MessageWithContact mc = new MessageWithContact();
+            mc.Contact = contactId;
+            mc.Message = message;
+            mc.UserId = Global.Id;
+            await Clients.All.SendAsync("Receive", mc);
         }
 
     }

@@ -9,9 +9,11 @@ import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 
 
 function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn, userID, usersArr}) {
-    
+    //console.log("start openChat " + contactId);
+    console.log("start openChat " + contactId);
+
+
     const showAllContactMesseges = async(id)=> {
-        
         let j = new Array();
         await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
         .then(data => j = data);

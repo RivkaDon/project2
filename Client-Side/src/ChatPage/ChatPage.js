@@ -62,16 +62,18 @@ function ChatPage({}) {
                 .then(result => {
                     
     
-                    myConn.on('Receive',( message, theContactId, theUserId) => {
-                       
-                        
+                    myConn.on('Receive',(mc) => {
+                        console.log("#the contact id= " + mc.Contact);
+                        console.log("#thUserId= " + mc.UserId);
+                        console.log("#currentuser= " + currentUser);
+                        if(currentUser === mc.Contact || currentUser === mc.UserId) {
                             console.log("in if");
                             const updatedChat = [...latestMeseges.current];
                             var arr1 = [['id', '9'],['content', message],
                             ['created', '2022-05-26T23:39:09.8661885+03:00'],['sent', true]];
-                            updatedChat.push(arr1);
+                            updatedChat.push(mc);
                             setMessages(updatedChat);
-                                                             
+                        }                       
                     });
                 })
                 .catch(e => console.log('Connection failed: ', e));
@@ -186,6 +188,7 @@ function ChatPage({}) {
         // to get messeges of clicked contact from server
     useEffect(()=>{
         var id = getContactId;
+        console.log("contact id= " + id);
         var j = new Array();
         if (getFlag) {
         const func = async()=> {
