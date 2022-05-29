@@ -82,6 +82,28 @@ function ChatPage({}) {
                             ['created', mc.Message.Created],['sent', true]];
                             updatedChat.push(mc);
                             setMessages(updatedChat);
+
+                            var j = new Array();
+                            const func = async()=> {
+                            console.log(token + "--------------------");    
+                            await fetch('https://localhost:7105/api/Contacts', {method:'GET'
+                            , headers: {
+                            "Authorization" : "Bearer " + token
+                            }}).then(response => response.json())
+                            .then(data => {if (data) {j = data}});
+       
+                            let myMap;
+                            let myArr = new Array;
+                            var i = 0;
+                            j.forEach(element => {
+                            myMap = new Array(Object.entries(element));
+                            myArr[i] = myMap;
+                            i++;
+                            });
+                            setList(myArr);
+                            console.log("my arr= " + myArr);
+                            }
+                            func()
                         }                       
                     });
                 })

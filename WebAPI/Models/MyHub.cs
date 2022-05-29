@@ -5,7 +5,7 @@ namespace WebAPI.Models
 {
     public class MyHub : Hub
     {
-        public async Task Send(string contactId, string stringMessage, string time, string sent)
+        public async Task Send(string contactId)
         {
             MessageService ms = new MessageService();
             Message message = ms.Get(contactId, Global.Id);
