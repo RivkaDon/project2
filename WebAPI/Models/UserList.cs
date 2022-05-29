@@ -26,11 +26,17 @@
         {
             ContactList contactList = new ContactList();
 
-            contactList.Add(new Contact() { Id = "harry", Name = "Harry Potter", Server = Global.Server });
-            contactList.Add(new Contact() { Id = "queen", Name = "Queen Elisabeth", Server = Global.Server });
-            contactList.Add(new Contact() { Id = "donald", Name = "Donald Trump", Server = Global.Server });
-            contactList.Add(new Contact() { Id = "snow", Name = "Snow white", Server = Global.Server });
-            contactList.Add(new Contact() { Id = "olof", Name = "Olof snow man", Server = Global.Server });
+            //contactList.Add(new Contact() { Id = "harry", Name = "Harry Potter", Server = Global.Server });
+            //contactList.Add(new Contact() { Id = "queen", Name = "Queen Elisabeth", Server = Global.Server });
+            //contactList.Add(new Contact() { Id = "donald", Name = "Donald Trump", Server = Global.Server });
+            //contactList.Add(new Contact() { Id = "snow", Name = "Snow white", Server = Global.Server });
+            //contactList.Add(new Contact() { Id = "olof", Name = "Olof snow man", Server = Global.Server });
+
+            contactList.Add(new Contact("harry", "Harry Potter",  Global.Server ));
+            contactList.Add(new Contact("queen", "Queen Elisabeth",  Global.Server ));
+            contactList.Add(new Contact("donald", "Donald Trump", Global.Server ));
+            contactList.Add(new Contact("snow", "Snow white",Global.Server ));
+            contactList.Add(new Contact("olof", "Olof snow man", Global.Server ));
 
             return contactList;
         }
@@ -46,7 +52,7 @@
             ContactList contactList = new ContactList();
             foreach (Contact contact in contacts.Contacts)
             {
-                if (contact.Id != id) contactList.Add(contact);
+                if (contact.Id != id) contactList.Add(new Contact(contact));
             }
             return contactList;
         }
@@ -56,7 +62,7 @@
             ChatList chatList = new ChatList();
             foreach (Contact contact in contacts.Contacts)
             {
-                chatList.Add(new Chat { Id = contact.Id, Contact = contact, Messages = new MessageList() });
+                chatList.Add(new Chat (contact.Id, contact, new MessageList() ));
             }
             return chatList;
         }
@@ -72,7 +78,7 @@
             ChatList chatList = new ChatList();
             foreach (Chat chat in chats.Chats)
             {
-                if (chat.Id != id) chatList.Add(chat);
+                if (chat.Id != id) chatList.Add(new Chat(chat));
             }
             return chatList;
         }

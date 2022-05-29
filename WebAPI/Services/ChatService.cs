@@ -21,6 +21,14 @@ namespace WebAPI.Services
             return user.Chats.Chats;
         }
 
+        public Contact GetContact(string userId, string contactId)
+        {
+            User user = userService.Get(userId);
+            if (user == null) return null;
+            if (user.Chats == null) return null;
+            return user.Contacts.Contacts.Find(e => e.Id == contactId);
+        }
+
         public bool Exists(string id1,string id2)
         {
             if (string.IsNullOrEmpty(id1) || string.IsNullOrEmpty(id2)) return false;

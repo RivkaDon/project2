@@ -6,6 +6,15 @@
 
         public MessageList() { }
 
+        public MessageList(MessageList m)
+        {
+            foreach (Message message in m.messages)
+            {
+                messages.Add(new Message(message));
+            }
+        }
+
+
         public List<Message> Messages
         {
             get { return messages; }

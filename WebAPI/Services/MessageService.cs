@@ -107,6 +107,10 @@ namespace WebAPI.Services
                 chat.Contact.Last = message.Content;
                 chat.Contact.LastDate = message.Created;
 
+                Contact contact = chatService.GetContact(id1, id2);
+                contact.Last = message.Content;
+                contact.LastDate = message.Created;
+
                 //chatService.CreateMessage(id1, chat, message);
             }
         }

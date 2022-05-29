@@ -68,22 +68,22 @@ namespace WebAPI.Services
             User user = Get(id1);
             if (user != null)
             {
-                Contact contact = new Contact()
+                /*Contact contact = new Contact()
                 {
                     Id = id2,
                     Name = name,
                     Server = server,
                     Last = null,
                     LastDate = null
-                };
+                };*/
+                Contact contact = new Contact(id2, name, server);
                 user.Contacts.Add(contact);
 
-                Chat chat = new Chat()
-                {
-                    Id = id2,
-                    Contact = contact,
-                    Messages = new MessageList()
-                };
+                Chat chat = new Chat(
+                    id2,
+                    contact,
+                    new MessageList()
+                );
 
                 user.Chats.Add(chat);
             }
