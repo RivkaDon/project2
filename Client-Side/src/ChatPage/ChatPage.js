@@ -11,12 +11,19 @@ import { NavLink } from 'react-router-dom';
 
 
 function ChatPage({}) {
+    const usersRef = useRef([]);
+    var allUsersArr = [];
+    const location = useLocation();
+    var currentUser = location.state.userNameInput;
+    var token = location.state.token;
+
     const [getS, setS] = useState(0);
     const [getAllUsers, setAllUsers] = useState([]);
     // to get all users
     const getUsers = async()=> {
         let j = new Array();    
-        await fetch('https://localhost:7105/api/Users', {method:'GET'}).then(response => response.json())
+        await fetch('https://localhost:7105/api/Users', 
+        {method:'GET'}).then(response => response.json())
             .then(data => j = data);
            
             let myMap;
@@ -27,6 +34,9 @@ function ChatPage({}) {
                 myArr[i] = myMap;
                 i++;
             });
+            allUsersArr = myArr;
+            usersRef.current = myArr;
+            console.log(usersRef.current);
             return myArr;
         }
         
@@ -45,8 +55,7 @@ function ChatPage({}) {
 
     latestMeseges.current = getMessages;
   
-    const location = useLocation();
-    var currentUser = location.state;
+   
 
     useEffect(() => {
         const signalrCon = new HubConnectionBuilder()
@@ -83,7 +92,11 @@ function ChatPage({}) {
     useEffect(()=>{
         var j = new Array();
         const func = async()=> {
-        await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
+            console.log(token + "--------------------");    
+        await fetch('https://localhost:7105/api/Contacts', {method:'GET'
+        , headers: {
+            "Authorization" : "Bearer " + token
+        }}).then(response => response.json())
         .then(data => {if (data) {j = data}});
        
         let myMap;
@@ -124,15 +137,34 @@ function ChatPage({}) {
     const isUser = function (name) {
         return usersList.some(code => { return (code.username === name); });
     }
-    
-    
-    
-    
-    var allUsersArr = [];
+
+    useEffect(()=> {
+        var j = new Array();
+        var myArr = new Array;
+        async function recieveUsers()
+         {
+            await fetch('https://localhost:7105/api/Users', {method:'GET'}).then(response => response.json())
+        .then(data => j = data);
+
+        let myMap;
+        var i = 0;
+        j.forEach(element => {
+            myMap = new Array(Object.entries(element));
+            myArr[i] = myMap;
+            i++;
+        });
+        allUsersArr = myArr;} recieveUsers();}, [])
+
+    useEffect(() => {
+        getUsers();
+    }, [])
     const SubmitNewContact = async function () {
         
         let userName;
         allUsersArr =  await getUsers();
+        usersRef.current = allUsersArr;
+        console.log("got from server:");
+        console.log(usersRef.current);
         var doesExist = false;
 
 
@@ -148,7 +180,9 @@ function ChatPage({}) {
         
             const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json',
+                "Authorization" : "Bearer " + token
+             },
             body: JSON.stringify({ id: newUserName.current.value, name: userName, server: "localhost:7105" })
         };
                 await fetch('https://localhost:7105/api/Contacts/', requestOptions);
@@ -157,7 +191,7 @@ function ChatPage({}) {
         else {
             const requestOptions = {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json'},
                 // check which server needs to be in request
                 body: JSON.stringify({ from: newUserName.current.value, to: currentUser, server: "localhost:7105" })
             };
@@ -167,7 +201,10 @@ function ChatPage({}) {
     
         var j = new Array();
         const func = async()=> {
-        await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
+        await fetch('https://localhost:7105/api/Contacts', {method:'GET'
+        , headers: {
+            "Authorization" : "Bearer " + token
+        }}).then(response => response.json())
         .then(data => j = data);
        
         let myMap;
@@ -192,7 +229,10 @@ function ChatPage({}) {
         var j = new Array();
         if (getFlag) {
         const func = async()=> {
-        await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
+        await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'
+        , headers: {
+            "Authorization" : "Bearer " + token
+        }}).then(response => response.json())
         .then(data => j = data);
         let myMap;
         let myArr = new Array;
@@ -211,7 +251,7 @@ function ChatPage({}) {
         if(getFlag!= true)
         {
 
-            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} idGetter={getContactId} contactListSetter={setList} contactID={getContactId} myConn={myConn} userID={currentUser} usersArr={allUsersArr} />
+            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} idGetter={getContactId} contactListSetter={setList} contactID={getContactId} myConn={myConn} userID={currentUser} usersArr={usersRef.current} token={token} />
 
         }
     }

@@ -14,11 +14,12 @@ namespace WebAPI.Controllers
     public class UsersController : Controller
     {
         public IConfiguration configuration;
-        private IUserService userService = new UserService();
+        private IUserService userService;
 
-        public UsersController(IConfiguration config)
+        public UsersController(IConfiguration config, IUserService us)
         {
             configuration = config; // allows to get to appsettings.json (which is a configuration file)
+            userService = us;
         }
 
         private bool validate(string id, string password)
@@ -68,11 +69,14 @@ namespace WebAPI.Controllers
                     configuration["JWTParams:Issuer"],
                     configuration["JWTParams:Audience"],
                     claims,
-                    expires: DateTime.UtcNow.AddMinutes(120), // ?
+                    expires: DateTime.UtcNow.AddDays(1),
                     signingCredentials: mac);
 
                 Global.Id = id;
                 Global.Server = "localhost:7105";
+
+                Token tok = new Token();
+                tok.Data = new JwtSecurityTokenHandler().WriteToken(token);
 
                 return Ok(new JwtSecurityTokenHandler().WriteToken(token));
             } else

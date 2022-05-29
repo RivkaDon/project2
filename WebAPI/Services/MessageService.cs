@@ -4,39 +4,31 @@ namespace WebAPI.Services
 {
     public class MessageService : IMessageService
     {
-        private IUserService userService;
         private IChatService chatService;
-        private Chat chat;
+        //private Chat chat;
 
-        public MessageService(Chat c)
+        public MessageService()
         {
-            userService = new UserService();
-            chatService = new ChatService(c.Id);
-            chat = c;
-        }
-
-        public MessageService(Chat c, string id)
-        {
-            userService = new UserService(id);
-            chatService = new ChatService(c.Id);
-            chat = c;
+            chatService = new ChatService();
+            //chat = c;
         }
         
-        public List<Message> GetAllMessages()
+        public List<Message> GetAllMessages(string id)
         {
+            Chat chat = chatService.Get(Global.Id, id);
             if (chat == null) return null;
             if (chat.Messages == null) return null;
             return chat.Messages.Messages;
         }
 
-        public int Count()
+        public int Count(string id)
         {
-            return GetAllMessages().Count;
+            return GetAllMessages(id).Count;
         }
 
-        public string lastId()
+        public string lastId(string id)
         {
-            List<Message> messages = GetAllMessages();
+            List<Message> messages = GetAllMessages(id);
             int len = messages.Count;
             if (len > 0)
             {
@@ -45,72 +37,72 @@ namespace WebAPI.Services
             return "";
         }
 
-        public bool Exists(string id)
+        public bool Exists(string id1, string id2)
         {
-            if (string.IsNullOrEmpty(id)) return false;
+            if (string.IsNullOrEmpty(id1) || string.IsNullOrEmpty(id2)) return false;
             
-            List<Message> messages = GetAllMessages();
+            List<Message> messages = GetAllMessages(id1);
             if (messages == null) return false;
 
             foreach (Message message in messages)
             {
-                if (message.Id == id) return true;
+                if (message.Id == id2) return true;
             }
             return false;
         }
 
-        public Message Get(string id)
+        public Message Get(string id1, string id2)
         {
-            if (!Exists(id)) return null;
-            return GetAllMessages().Find(x => x.Id == id);
+            if (!Exists(id1, id2)) return null;
+            return GetAllMessages(id1).Find(x => x.Id == id2);
         }
 
         public void Edit(string id, bool sent, string content = null, DateTime? created = null)
         {
-            Message message = Get(id);
+            Chat chat = chatService.Get(Global.Id, id);
+            Message message = Get(Global.Id, id);
             if (message != null)
             {
                 chat.Messages.Edit(message, sent, content, created);
 
                 // Checking is the message was sent by the user (and not to the user).
-                if (sent)
-                {
-                    chat.Contact.Last = message.Content;
-                    chat.Contact.LastDate = message.Created;
-                }
+                chat.Contact.Last = message.Content;
+                chat.Contact.LastDate = message.Created;
             }
         }
 
         public void Delete(string id)
         {
-            Message message = Get(id);
+            Chat chat = chatService.Get(Global.Id, id);
+            Message message = Get(Global.Id, id);
             if (message != null)
             {
                 chatService.DeleteMessage(chat, message);
             }
         }
 
-        public void SendMessage(string content, bool sent)
+        public void SendMessage(string id1, string id2, string content, bool sent)
         {
             if (content != null)
             {
-                Message message = new Message();
-                int len = GetAllMessages().Count;
+                Chat chat = chatService.Get(id1, id2);
 
-                message.Id = lastId() + len;
+                Message message = new Message();
+                int len = GetAllMessages(id2).Count; // 
+
+                message.Id = lastId(id2) + len;
                 message.Created = DateTime.Now;
                 message.Content = content;
                 message.Sent = sent;
 
                 chat.Messages.Add(message);
+                
 
                 // Checking if the message was sent by the user (and not to the user).
                 chat.Contact.Last = message.Content;
                 chat.Contact.LastDate = message.Created;
-                /*if (sent)
-                {
-                    
-                }*/
+
+                //chatService.CreateMessage(id1, chat, message);
             }
         }
     }

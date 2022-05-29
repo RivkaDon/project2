@@ -12,6 +12,7 @@ namespace WebAPI.Models
             mc.Message = message;
             mc.UserId = Global.Id;
             await Clients.All.SendAsync("Receive", mc);
+
         }
 
     }

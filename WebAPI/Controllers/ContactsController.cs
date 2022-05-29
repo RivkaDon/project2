@@ -7,29 +7,38 @@ using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
     public class ContactsController : ControllerBase
     {
         private IContactService contactService;
         private IChatService chatService;
         private IMessageService messageService;
+        private IUserService userService;
 
-        public ContactsController()
+        public ContactsController(IUserService us, IChatService cs)
         {
-            //Global.Id = "1"; // delete later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            Global.Server = "localhost:7105";
-            contactService = new ContactService(Global.Id);
-            chatService = new ChatService(Global.Id);
+            //Global.Id = "harry";
+            //Global.Server = "localhost:7105";
+            
+            //chatService = new ChatService();
+            messageService = new MessageService();
+            //userService = new UserService();
+            
+            chatService = cs;
+            userService = us;
+
+            /*Global.Id = "harry";
+            chatService = new ChatService(Global.Id);*/
         }
 
-        private int setMessageService(string id)
+        private int setMessageService(string id1, string id2)
         {
-            Chat c = chatService.Get(id);
+            Chat c = chatService.Get(id1, id2);
             if (c != null)
             {
-                messageService = new MessageService(c);
+                //messageService = new MessageService(c);
                 return 0;
             }
             return 1;
@@ -38,30 +47,31 @@ namespace WebAPI.Controllers
 
         private int updateChat(string action, string id1, string id2 = null, string content = null, DateTime? now = null)
         {
-            chatService = new ChatService(id1);
-            Chat c = chatService.Get(Global.Id);
+            Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            Chat c = chatService.Get(id1, Global.Id); // Global.id
 
             if (c != null)
             {
-                messageService = new MessageService(c);
+                //messageService = new MessageService(c);
 
                 switch (action)
                 {
                     case "post":
                         //if (content == null) return 1;
-                        messageService.SendMessage(content, false);
+                        messageService.SendMessage(Global.Id, id1, content, true);
                         break;
                     case "put":
-                        messageService.Edit(id2, false, content, now);
+                        messageService.Edit(id2, true, content, now);
                         break;
                     case "delete":
                         messageService.Delete(id2);
                         break;
                 }
                 
-                chatService = new ChatService(Global.Id);
+                //chatService = new ChatService(); // Global.Id
                 return 0;
             }
+            if (!userService.Exists(id1)) return 0;
             return 1;
         }
 
@@ -72,6 +82,8 @@ namespace WebAPI.Controllers
         [HttpGet]
         public List<Contact> Get()
         {
+            Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            contactService = new ContactService(Global.Id);
             Response.StatusCode = 200;
             return contactService.GetAllContacts();
         }
@@ -84,6 +96,8 @@ namespace WebAPI.Controllers
         [HttpGet("{id}")]
         public Contact Get(string id)
         {
+            Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            contactService = new ContactService(Global.Id);
             Contact contact = contactService.Get(id);
             if (contact == null)
             {
@@ -102,12 +116,13 @@ namespace WebAPI.Controllers
         [HttpGet("{id}/messages")]
         public List<Message> GetMessages(string id)
         {
-            if (setMessageService(id) > 0)
+            Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            /*if (setMessageService(Global.Id, id) > 0)
             {
                 Response.StatusCode = 404;
                 return null;
-            }
-            List<Message> messages = messageService.GetAllMessages();
+            }*/
+            List<Message> messages = messageService.GetAllMessages(id);
 
             if (messages == null)
             {
@@ -127,12 +142,13 @@ namespace WebAPI.Controllers
         [HttpGet("{id1}/messages/{id2}")]
         public Message Get(string id1, string id2)
         {
-            if (setMessageService(id1) > 0)
+            Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            /*if (setMessageService(Global.Id, id1) > 0)
             {
                 Response.StatusCode = 404;
                 return null;
-            }
-            Message message = messageService.Get(id2);
+            }*/
+            Message message = messageService.Get(id1, id2);
 
             if (message == null)
             {
@@ -150,8 +166,9 @@ namespace WebAPI.Controllers
         [HttpPost]
         public void Post([FromBody] RequestCreationOfNewContact request)
         {
+            Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
             // setChatService(Global.Id);
-            int num = chatService.CreateChat(request.Id, request.Name, request.Server);
+            int num = chatService.CreateChat(Global.Id, request.Id, request.Name, request.Server);
             if (num > 0)
             {
                 Response.StatusCode = 404;
@@ -168,17 +185,19 @@ namespace WebAPI.Controllers
         [HttpPost("{id}/messages")]
         public void Post(string id, [FromBody] RequestCreationOfNewMessage request)
         {
-            if (setMessageService(id) > 0)
+            Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            /*if (setMessageService(Global.Id, id) > 0)
             {
                 Response.StatusCode = 404;
                 return;
-            }
-            messageService.SendMessage(request.Content, true);
+            }*/
+
+            messageService.SendMessage(Global.Id, id, request.Content, true);
             
-            if (updateChat("post", id, null, request.Content) > 0)
+            /*if (updateChat("post", id, null, request.Content) > 0)
             {
                 Response.StatusCode = 404;
-            }
+            }*/
 
             Response.StatusCode = 201;
         }
@@ -191,6 +210,8 @@ namespace WebAPI.Controllers
         [HttpPut("{id}")]
         public void Put(string id, [FromBody] RequestEditContact request)
         {
+            Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            contactService = new ContactService(Global.Id);
             Contact contact = contactService.Get(id);
             if (contact != null)
             {
@@ -221,9 +242,10 @@ namespace WebAPI.Controllers
         [HttpPut("{id1}/messages/{id2}")]
         public void Put(string id1, string id2, [FromBody] RequestEditMessage request)
         {
-            bool b1 = setMessageService(id1) > 0;
-            bool b2 = messageService.Get(id2) == null;
-            if (b1 || b2)
+            Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            //bool b1 = setMessageService(Global.Id, id1) > 0;
+            //bool b2 = messageService.Get(id1, id2) == null;
+            if (messageService.Get(id1, id2) == null)
             {
                 Response.StatusCode = 404;
                 return;
@@ -248,7 +270,8 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(string id)
         {
-            if (chatService.Delete(id) > 0)
+            Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            if (chatService.Delete(Global.Id, id) > 0)
             {
                 Response.StatusCode = 404;
                 return;
@@ -264,16 +287,19 @@ namespace WebAPI.Controllers
         [HttpDelete("{id1}/messages/{id2}")]
         public void Delete(string id1, string id2)
         {
-            bool b1 = setMessageService(id1) > 0;
-            bool b2 = messageService.Get(id2) == null;
-            if (b1 || b2)
+            Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
+            contactService = new ContactService(Global.Id);
+
+            //bool b1 = setMessageService(Global.Id, id1) > 0;
+            //bool b2 = messageService.Get(id2) == null;
+            if (messageService.Get(id1, id2) == null)
             {
                 Response.StatusCode = 404;
                 return;
             }
 
             messageService.Delete(id2);
-            List<Message> messages = messageService.GetAllMessages();
+            List<Message> messages = messageService.GetAllMessages(id1);
             contactService.UpdateLastDate(id1, messages);
 
             if (updateChat("delete", id1, id2) > 0)

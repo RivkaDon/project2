@@ -5,17 +5,17 @@ namespace WebAPI.Services
     public class UserService : IUserService
     {
         private static UserList users = new UserList();
-        private User user;
+        //private User user;
 
         public UserService()
         {
-            user = Get(Global.Id);
+            //users = new UserList();
         }
 
-        public UserService(string id)
+        /*public static void SetUsers()
         {
-            user = Get(id);
-        }
+            users = new UserList();
+        }*/
 
         public List<User> GetAllUsers()
         {
@@ -63,13 +63,14 @@ namespace WebAPI.Services
             return 0;
         }
 
-        public int CreateContact(string id, string name, string server)
+        public int CreateContact(string id1, string id2, string name, string server)
         {
+            User user = Get(id1);
             if (user != null)
             {
                 Contact contact = new Contact()
                 {
-                    Id = id,
+                    Id = id2,
                     Name = name,
                     Server = server,
                     Last = null,
@@ -79,7 +80,7 @@ namespace WebAPI.Services
 
                 Chat chat = new Chat()
                 {
-                    Id = id,
+                    Id = id2,
                     Contact = contact,
                     Messages = new MessageList()
                 };
@@ -99,25 +100,27 @@ namespace WebAPI.Services
             return 0;
         }
 
-        public int CreateChat(string id, string name, string server)
+        public int CreateChat(string id1, string id2, string name, string server)
         {
-            if (!Exists(id)) return 1;
-            return CreateContact(id, name, server);
+            if (!Exists(id1)) return 1;
+            return CreateContact(id1, id2, name, server);
         }
 
-        public int CreateChatInvitation(string id, string name, string server)
+        public int CreateChatInvitation(string id1, string id2, string name, string server)
         {
-            return CreateContact(id, name, server);
+            return CreateContact(id1, id2, name, server);
         }
 
-        public void DeleteContact(Contact contact)
+        public void DeleteContact(string id, Contact contact)
         {
+            User user = Get(id);
             users.DeleteContact(user, contact);
         }
 
-        public void DeleteChat(Chat chat)
+        public void DeleteChat(string id, Chat chat)
         {
-            DeleteContact(chat.Contact);
+            User user = Get(id);
+            DeleteContact(id, chat.Contact);
             users.DeleteChat(user, chat);
         }
     }
