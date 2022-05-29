@@ -224,7 +224,7 @@ function ChatPage({}) {
         if(getFlag!= true)
         {
 
-            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} idGetter={getContactId} contactListSetter={setList} contactID={getContactId} myConn={myConn} userID={currentUser} usersArr={allUsersArr} />
+            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} idGetter={getContactId} contactListSetter={setList} contactID={getContactId} myConn={myConn} userID={currentUser} usersArr={allUsersArr} token={token} />
 
         }
     }

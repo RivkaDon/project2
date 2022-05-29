@@ -17,11 +17,11 @@ namespace WebAPI.Controllers
         private IMessageService messageService;
         private IUserService userService;
 
-        public ContactsController()
+        public ContactsController(IUserService us, IChatService cs)
         {
             Global.Server = "localhost:7105";
-            chatService = new ChatService();
-            userService = new UserService();
+            chatService = cs;
+            userService = us;
 
             /*Global.Id = "harry";
             chatService = new ChatService(Global.Id);*/

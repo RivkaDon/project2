@@ -15,14 +15,16 @@ namespace WebAPI.Controllers
 
         private IInvitationService invitationService = new InvitationService();
 
-        public TransferController()
+        public TransferController(IUserService us, IChatService cs)
         {
             Global.Server = "localhost:7105";
+            userService = us;
+            chatService = cs;
         }
 
         private int updateChat(string from, string to, string content)
         {
-            chatService = new ChatService();
+            
             Chat c = chatService.Get(to);
 
             if (c != null && content != null)
@@ -51,7 +53,7 @@ namespace WebAPI.Controllers
                 return;
             }
 
-            userService = new UserService();
+            
 
             User user1 = userService.Get(to);
             if (user1 == null) // Checking if the user exists.
@@ -60,7 +62,7 @@ namespace WebAPI.Controllers
                 return;
             }
 
-            chatService = new ChatService();
+            
             Chat chat = chatService.Get(from);
 
             if (chat == null) // Checking if the contact exists (as one of the user's contacts).

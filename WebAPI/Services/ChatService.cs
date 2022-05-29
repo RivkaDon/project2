@@ -7,9 +7,9 @@ namespace WebAPI.Services
         private IUserService userService;
         //private User user;
 
-        public ChatService()
+        public ChatService(IUserService us)
         {
-            userService = new UserService();
+            userService = us;
             //user = userService.Get(id);
         }
 

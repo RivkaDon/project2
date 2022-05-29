@@ -8,7 +8,7 @@ import AttachRecording from './RecordAttachment';
 import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 
 
-function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn, userID, usersArr}) {
+function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRender, imageGetter, lastMessages, idGetter, contactListSetter, contactId, myConn, userID, usersArr, token}) {
     
     const showAllContactMesseges = async(id)=> {
         
