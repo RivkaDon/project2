@@ -11,7 +11,8 @@ import { NavLink } from 'react-router-dom';
 
 
 function ChatPage({}) {
-    
+    const usersRef = useRef([]);
+    var allUsersArr = [];
     const location = useLocation();
     var currentUser = location.state.userNameInput;
     var token = location.state.token;
@@ -33,6 +34,9 @@ function ChatPage({}) {
                 myArr[i] = myMap;
                 i++;
             });
+            allUsersArr = myArr;
+            usersRef.current = myArr;
+            console.log(usersRef.current);
             return myArr;
         }
         
@@ -131,15 +135,34 @@ function ChatPage({}) {
     const isUser = function (name) {
         return usersList.some(code => { return (code.username === name); });
     }
-    
-    
-    
-    
-    var allUsersArr = [];
+
+    useEffect(()=> {
+        var j = new Array();
+        var myArr = new Array;
+        async function recieveUsers()
+         {
+            await fetch('https://localhost:7105/api/Users', {method:'GET'}).then(response => response.json())
+        .then(data => j = data);
+
+        let myMap;
+        var i = 0;
+        j.forEach(element => {
+            myMap = new Array(Object.entries(element));
+            myArr[i] = myMap;
+            i++;
+        });
+        allUsersArr = myArr;} recieveUsers();}, [])
+
+    useEffect(() => {
+        getUsers();
+    }, [])
     const SubmitNewContact = async function () {
         
         let userName;
         allUsersArr =  await getUsers();
+        usersRef.current = allUsersArr;
+        console.log("got from server:");
+        console.log(usersRef.current);
         var doesExist = false;
 
 
@@ -225,7 +248,7 @@ function ChatPage({}) {
         if(getFlag!= true)
         {
 
-            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} idGetter={getContactId} contactListSetter={setList} contactID={getContactId} myConn={myConn} userID={currentUser} usersArr={allUsersArr} token={token} />
+            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} idGetter={getContactId} contactListSetter={setList} contactID={getContactId} myConn={myConn} userID={currentUser} usersArr={usersRef.current} token={token} />
 
         }
     }
