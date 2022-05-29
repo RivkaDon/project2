@@ -19,7 +19,7 @@ namespace WebAPI.Services
             if (string.IsNullOrEmpty(content)) return;
 
             chatService = new ChatService();
-            Chat chat = chatService.Get(to.Id);
+            Chat chat = chatService.Get(from.Id, to.Id);
 
             if (chat == null) // Checking if the contact exists (as one of the user's contacts).
             {

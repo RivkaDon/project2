@@ -52,8 +52,6 @@ namespace WebAPI.Controllers
         //[ValidateAntiForgeryToken]
         public IActionResult Post(string id, string password)
         {
-            
-
             if (validate(id, password)) // Checking if this id exists, and if the password is the right password.
             {
                 var claims = new[]
@@ -78,7 +76,7 @@ namespace WebAPI.Controllers
                 Global.Server = "localhost:7105";
 
                 Token tok = new Token();
-                tok.Token = new JwtSecurityTokenHandler().WriteToken(token);
+                tok.Data = new JwtSecurityTokenHandler().WriteToken(token);
 
                 return Ok(tok);
             } else

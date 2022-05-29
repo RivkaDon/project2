@@ -55,14 +55,14 @@ namespace WebAPI.Services
             {
                 userService.DeleteContact(contact);  // add else return 1 for 404
 
-                /*IUserService us = new UserService();
+                IUserService us = new UserService();
                 User u = us.Get(id);
                 if (u != null)
                 {
                     List<Contact> contacts = u.Contacts.Contacts;
                     Contact c = contacts.Find(c => c.Id == user.Id);
                     us.DeleteContact(c);
-                }*/
+                }
                 return 0;
             }
             return 1;
@@ -75,8 +75,8 @@ namespace WebAPI.Services
 
             if (num > 0) return;
 
-            /*IUserService us = new UserService(id);
-            us.CreateContact(user.Id, user.Name, Global.Server);*/
+            IUserService us = new UserService();
+            us.CreateContact(user.Id, user.Name, Global.Server);
         }
 
         public void UpdateLastDate(string id, List<Message> messages)

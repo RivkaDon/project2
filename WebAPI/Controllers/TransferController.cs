@@ -24,13 +24,12 @@ namespace WebAPI.Controllers
 
         private int updateChat(string from, string to, string content)
         {
-            
-            Chat c = chatService.Get(to);
+            Chat c = chatService.Get(from, to);
 
             if (c != null && content != null)
             {
-                IMessageService messageService = new MessageService(c);
-                messageService.SendMessage(content, false);
+                IMessageService messageService = new MessageService();
+                messageService.SendMessage(from, to, content, false); // or from?
                 return 0;
             }
             if (!userService.Exists(from)) return 0;
@@ -53,17 +52,14 @@ namespace WebAPI.Controllers
                 return;
             }
 
-            
-
             User user1 = userService.Get(to);
             if (user1 == null) // Checking if the user exists.
             {
                 Response.StatusCode = 404;
                 return;
             }
-
             
-            Chat chat = chatService.Get(from);
+            Chat chat = chatService.Get(to, from); // check this
 
             if (chat == null) // Checking if the contact exists (as one of the user's contacts).
             {
@@ -77,12 +73,12 @@ namespace WebAPI.Controllers
                     return;
                 }
                 invitationsController.invited = false;
-                chat = chatService.Get(from);
+                chat = chatService.Get(to, from);
             }
 
             //IMessageService messageService = new MessageService(chat, to);
-            IMessageService messageService = new MessageService(chat);
-            messageService.SendMessage(request.Content, false);
+            IMessageService messageService = new MessageService();
+            messageService.SendMessage(to, from, request.Content, false);
 
             if (updateChat(from, to, request.Content) > 0)
             {
