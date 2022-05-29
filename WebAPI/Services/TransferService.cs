@@ -5,25 +5,20 @@ namespace WebAPI.Services
 {
     public class TransferService : ITransferService
     {
-        // private IUserService userService;
         private IChatService chatService;
-        // private IMessageService messageService;
-
         private IInvitationService invitationService = new InvitationService();
 
         public TransferService(string id)
         {
-            chatService = new ChatService(id);
-            /*Chat c = chatService.Get(id);
-            messageService = new MessageService(c);*/
+            chatService = new ChatService();
         }
 
         public void transfer(User from, User to, string content)
         {
-            if (from == null || to == null) return; // 404?
+            if (from == null || to == null) return;
             if (string.IsNullOrEmpty(content)) return;
 
-            chatService = new ChatService(from.Id);
+            chatService = new ChatService();
             Chat chat = chatService.Get(to.Id);
 
             if (chat == null) // Checking if the contact exists (as one of the user's contacts).
@@ -33,9 +28,7 @@ namespace WebAPI.Services
 
                 invitationsController.Post(r); // Sending an invitation.
                 chatService.CreateChat(to.Id, to.Name, r.Server);
-                
             }
-
         }
     }
 }

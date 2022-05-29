@@ -34,7 +34,7 @@ namespace WebAPI.Services
         {
             if (from == null || to == null) return 1;
 
-            userService = new UserService(to);
+            userService = new UserService();
             User user = userService.Get(to);
             if (user == null) return 1; // Checking if the user doesn't exist.
 
@@ -42,7 +42,7 @@ namespace WebAPI.Services
             Contact contact = contactService.Get(from);
             if (contact != null) return 1; // Checking if the contact already exists (as one of the user's contacts).
 
-            chatService = new ChatService(to);
+            chatService = new ChatService();
             if (chatService.CreateChatInvitation(from, from, server) > 0) return 1;
 
             return 0;

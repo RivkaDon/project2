@@ -6,17 +6,10 @@ namespace WebAPI.Services
     {
         private IUserService userService;
         private User user;
-
-        public ContactService()
+        public ContactService(string userId)
         {
             userService = new UserService();
-            user = userService.Get(Global.Id);
-        }
-
-        public ContactService(string id)
-        {
-            userService = new UserService(id);
-            user = userService.Get(id);
+            user = userService.Get(userId);
         }
 
         public List<Contact> GetAllContacts()
@@ -62,18 +55,16 @@ namespace WebAPI.Services
             {
                 userService.DeleteContact(contact);  // add else return 1 for 404
 
-                IUserService us = new UserService(id);
+                /*IUserService us = new UserService();
                 User u = us.Get(id);
                 if (u != null)
                 {
                     List<Contact> contacts = u.Contacts.Contacts;
                     Contact c = contacts.Find(c => c.Id == user.Id);
                     us.DeleteContact(c);
-                }
-
+                }*/
                 return 0;
             }
-
             return 1;
         }
 
@@ -82,10 +73,10 @@ namespace WebAPI.Services
             if (Exists(id)) return;
             int num = userService.CreateContact(id, name, server);
 
-            if (num > 0) return; // return num
+            if (num > 0) return;
 
-            IUserService us = new UserService(id);
-            us.CreateContact(user.Id, user.Name, Global.Server);
+            /*IUserService us = new UserService(id);
+            us.CreateContact(user.Id, user.Name, Global.Server);*/
         }
 
         public void UpdateLastDate(string id, List<Message> messages)
