@@ -16,6 +16,7 @@ var passwordInput = "";
 
 
 function SignPage2() {
+    var token = "";
     const [isCorrect, setIsCorrect] = useState(false);
     // to get users list from server
     const [getUsers, setUsers] = useState([]);
@@ -24,7 +25,7 @@ function SignPage2() {
         const func = async()=> {
         await fetch('https://localhost:7105/api/Users', {method:'GET'}).then(response => response.json())
         .then(data => j = data);
-        
+
         let myMap;
         var i = 0;
         j.forEach(element => {
@@ -68,9 +69,7 @@ function CheckInput(event) {
             setErrorFor(password, 'User does not exist');
             flag = false;
         }
-        if (flag === true) {
-            setIsCorrect(true);
-        }
+        
         
         
         // Simple POST request with a JSON body using fetch
@@ -79,7 +78,10 @@ function CheckInput(event) {
                 headers: { 'Content-Type': 'application/json' },
             };
             fetch('https://localhost:7105/api/Users/?id='+userNameInput+'&password='+passwordInput, requestOptions)
-                
+            .then(res=> res.text()).then(tok=>{token = tok;
+                if (flag === true) {
+                    setIsCorrect(true);
+                }});
 }
 
     
@@ -101,7 +103,7 @@ function CheckInput(event) {
     return (
         <div id='containerAll'>
             {(isCorrect) ?
-                (<Navigate to="/chat" state={userNameInput} />) :
+                (<Navigate to="/chat" state={userNameInput} token={token} />) :
                 (
                     <div className="container" id='container'>
                         <div className="header">

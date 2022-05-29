@@ -13,7 +13,10 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
     const showAllContactMesseges = async(id)=> {
         
         let j = new Array();
-        await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
+        await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'
+        , headers: {
+            "Authorization" : "Bearer " + token
+        }}).then(response => response.json())
         .then(data => j = data);
         let myMap;
         let myArr = new Array;
@@ -30,7 +33,10 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
 
     const showContacts = async()=> {
         let j = new Array();    
-        await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
+        await fetch('https://localhost:7105/api/Contacts', {method:'GET'
+        , headers: {
+            "Authorization" : "Bearer " + token
+        }}).then(response => response.json())
             .then(data => j = data);
            
             let myMap;
@@ -74,7 +80,9 @@ function OpenChat({ getter, messageGetter, messageSetter, contactSetter, setReRe
         // Simple POST request with a JSON body using fetch
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json',
+                "Authorization" : "Bearer " + token
+             },
             body: JSON.stringify({ content: newMessage.current.value })
         };
         
