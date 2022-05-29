@@ -11,6 +11,25 @@ import { NavLink } from 'react-router-dom';
 
 
 function ChatPage({}) {
+    const [getAllUsers, setAllUsers] = useState([]);
+    // to get all users
+    const getUsers = async()=> {
+        let j = new Array();    
+        await fetch('https://localhost:7105/api/Users', {method:'GET'}).then(response => response.json())
+            .then(data => j = data);
+           
+            let myMap;
+            let myArr = new Array;
+            var i = 0;
+            j.forEach(element => {
+                myMap = new Array(Object.entries(element));
+                myArr[i] = myMap;
+                i++;
+            });
+            return myArr;
+        }
+        
+    
     // hook for passing and updating contact messages
     const [getMessages, setMessages] = useState();
 
@@ -58,7 +77,7 @@ function ChatPage({}) {
         var j = new Array();
         const func = async()=> {
         await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
-        .then(data => j = data);
+        .then(data => {if (data) {j = data}});
        
         let myMap;
         let myArr = new Array;
@@ -73,24 +92,6 @@ function ChatPage({}) {
         func()
     }, []);
 
-
-    // // to get messeges of clicked contact from server
-    // useEffect(()=>{
-    //     /////////- need to get id- do with getter from contactcard 
-    //     var id = 2;
-    //     /////////- need to get id
-    //     var j = new Array();
-    //     const func = async()=> {
-    //     await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'}).then(response => response.json())
-    //     .then(data => j = data);
-    //     //console.log(j);
-    // }
-    //     func()
-    // }, []);
-
-    
-    //const location = useLocation();
-    //var currentUser = location.state;
     const getUsernameReturnContacts = function(userName){
         var temp = [];
         usersList.forEach(element => { if(element.username == userName) {temp = element.contacts; return;}}) 
@@ -116,13 +117,47 @@ function ChatPage({}) {
     const isUser = function (name) {
         return usersList.some(code => { return (code.username === name); });
     }
+    
+    
+    
+    
+    var allUsersArr = [];
     const SubmitNewContact = async function () {
-        const requestOptions = {
+        
+        let userName;
+        allUsersArr =  await getUsers();
+        var doesExist = false;
+
+
+        // to find the name of the id given for the contact to add
+        allUsersArr.forEach(element => {
+            if (element[0][0][1] === newUserName.current.value) {
+                userName = element[0][1][1];
+                doesExist = true;
+            }
+        });
+
+        if (doesExist) {
+        
+            const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: newUserName.current.value })
+            body: JSON.stringify({ id: newUserName.current.value, name: userName, server: "localhost:7105" })
         };
-        await fetch('https://localhost:7105/api/Contacts/', requestOptions);
+                await fetch('https://localhost:7105/api/Contacts/', requestOptions);
+        }
+        
+        else {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                // check which server needs to be in request
+                body: JSON.stringify({ from: newUserName.current.value, to: currentUser, server: "localhost:7105" })
+            };
+                    await fetch('https://localhost:7105/api/Invitations/', requestOptions);
+
+        }
+    
         var j = new Array();
         const func = async()=> {
         await fetch('https://localhost:7105/api/Contacts', {method:'GET'}).then(response => response.json())
@@ -167,15 +202,25 @@ function ChatPage({}) {
         if(getFlag!= true)
         {
 
-            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} idGetter={getContactId} contactListSetter={setList} contactID={getContactId} myConn={myConn} userID={currentUser} />
+            return <OpenChat getter={getChat} messageGetter={getMessages} messageSetter={setMessages} contactSetter={addUserName} setReRender={setReRender} imageGetter={getContactImage} lastMessages={latestMeseges} idGetter={getContactId} contactListSetter={setList} contactID={getContactId} myConn={myConn} userID={currentUser} usersArr={allUsersArr} />
 
         }
     }
-    const getUsernameReturnNickName = function(userName){
-        var temp = '';
-        usersList.forEach(element => { if(element.username == userName) {temp = element.nickName; return;}}) 
-        return temp;   
-    }
+    // const getUsernameReturnNickName = function(userName){
+        
+        
+       
+    //     console.log( getAllUsers);
+      
+    //     // to find the name of the id given for the contact to add
+    //     getAllUsers.forEach(element => {
+    //         console.log(element[0][0][1]+","+userName);
+    //         if (element[0][0][1] == userName) {
+    //             return element[0][1][1];
+    //         }
+    //     });   
+    // }
+    // const currentUserName = getUsernameReturnNickName(currentUser);
     
     return (
         <div className="App container">
@@ -184,7 +229,7 @@ function ChatPage({}) {
                     <div className="col-4">
                         <div type="button" className="btn">
                             <i className="bi bi-envelope-paper-heart-fill"></i>
-                        </div>{getUsernameReturnNickName(currentUser)}
+                        </div>{currentUser}
                         <button type="button" id='rate' className="btn" onClick={()=>NavLink("https://localhost:7136/")} >
                         <a href='https://localhost:7136/'><i className="bi bi-star"></i>Rate Us<i className="bi bi-star"></i></a>
                         </button>

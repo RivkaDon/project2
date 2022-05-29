@@ -24,7 +24,7 @@ function SignPage2() {
         const func = async()=> {
         await fetch('https://localhost:7105/api/Users', {method:'GET'}).then(response => response.json())
         .then(data => j = data);
-       
+        
         let myMap;
         var i = 0;
         j.forEach(element => {
