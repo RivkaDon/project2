@@ -12,10 +12,10 @@ namespace WebAPI.Services
             chatService = new ChatService();
             //chat = c;
         }
-        
-        public List<Message> GetAllMessages(string id)
+
+        public List<Message> GetAllMessages(string userId, string contactId)
         {
-            Chat chat = chatService.Get(Global.Id, id);
+            Chat chat = chatService.Get(userId, contactId);
             if (chat == null) return null;
             if (chat.Messages == null) return null;
             return chat.Messages.Messages;
@@ -23,12 +23,12 @@ namespace WebAPI.Services
 
         public int Count(string id)
         {
-            return GetAllMessages(id).Count;
+            return GetAllMessages(Global.Id, id).Count;
         }
 
-        public string lastId(string id)
+        public string lastId(string userId, string contactId)
         {
-            List<Message> messages = GetAllMessages(id);
+            List<Message> messages = GetAllMessages(userId, contactId);
             int len = messages.Count;
             if (len > 0)
             {
@@ -40,8 +40,8 @@ namespace WebAPI.Services
         public bool Exists(string id1, string id2)
         {
             if (string.IsNullOrEmpty(id1) || string.IsNullOrEmpty(id2)) return false;
-            
-            List<Message> messages = GetAllMessages(id1);
+
+            List<Message> messages = GetAllMessages(Global.Id, id1);
             if (messages == null) return false;
 
             foreach (Message message in messages)
@@ -54,7 +54,7 @@ namespace WebAPI.Services
         public Message Get(string id1, string id2)
         {
             if (!Exists(id1, id2)) return null;
-            return GetAllMessages(id1).Find(x => x.Id == id2);
+            return GetAllMessages(Global.Id, id1).Find(x => x.Id == id2);
         }
 
         public void Edit(string id, bool sent, string content = null, DateTime? created = null)
@@ -88,15 +88,20 @@ namespace WebAPI.Services
                 Chat chat = chatService.Get(id1, id2);
 
                 Message message = new Message();
-                int len = GetAllMessages(id2).Count; // 
+                //int len = GetAllMessages(id2, id1).Count; // 
 
-                message.Id = lastId(id2) + len;
-                message.Created = DateTime.Now;
+                DateTime date = DateTime.Now;
+
+                var random = new Random();
+                int randNum = random.Next(0, 999);
+
+                message.Id = "" + date + randNum;
+                message.Created = date;
                 message.Content = content;
                 message.Sent = sent;
 
                 chat.Messages.Add(message);
-                
+
 
                 // Checking if the message was sent by the user (and not to the user).
                 chat.Contact.Last = message.Content;
