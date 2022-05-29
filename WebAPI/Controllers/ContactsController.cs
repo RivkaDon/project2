@@ -122,7 +122,7 @@ namespace WebAPI.Controllers
                 Response.StatusCode = 404;
                 return null;
             }*/
-            List<Message> messages = messageService.GetAllMessages(id);
+            List<Message> messages = messageService.GetAllMessages(Global.Id, id);
 
             if (messages == null)
             {
@@ -193,7 +193,8 @@ namespace WebAPI.Controllers
             }*/
 
             messageService.SendMessage(Global.Id, id, request.Content, true);
-            
+            messageService.SendMessage(id, Global.Id, request.Content, false);
+
             /*if (updateChat("post", id, null, request.Content) > 0)
             {
                 Response.StatusCode = 404;
@@ -299,7 +300,7 @@ namespace WebAPI.Controllers
             }
 
             messageService.Delete(id2);
-            List<Message> messages = messageService.GetAllMessages(id1);
+            List<Message> messages = messageService.GetAllMessages(Global.Id, id1);
             contactService.UpdateLastDate(id1, messages);
 
             if (updateChat("delete", id1, id2) > 0)

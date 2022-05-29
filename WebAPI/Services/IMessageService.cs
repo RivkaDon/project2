@@ -4,7 +4,7 @@ namespace WebAPI.Services
 {
     public interface IMessageService
     {
-        public List<Message> GetAllMessages(string id);
+        public List<Message> GetAllMessages(string userId, string contactId);
         public Message Get(string id1, string id2);
         public void Edit(string id, bool sent, string content = null, DateTime? created = null);
         public void Delete(string id);
