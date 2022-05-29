@@ -4,21 +4,12 @@ namespace WebAPI.Services
 {
     public class MessageService : IMessageService
     {
-        private IUserService userService;
         private IChatService chatService;
         private Chat chat;
 
         public MessageService(Chat c)
         {
-            userService = new UserService();
-            chatService = new ChatService(c.Id);
-            chat = c;
-        }
-
-        public MessageService(Chat c, string id)
-        {
-            userService = new UserService(id);
-            chatService = new ChatService(c.Id);
+            chatService = new ChatService();
             chat = c;
         }
         
@@ -75,10 +66,6 @@ namespace WebAPI.Services
                 // Checking is the message was sent by the user (and not to the user).
                 chat.Contact.Last = message.Content;
                 chat.Contact.LastDate = message.Created;
-                /*if (sent)
-                {
-                    
-                }*/
             }
         }
 
@@ -108,10 +95,6 @@ namespace WebAPI.Services
                 // Checking if the message was sent by the user (and not to the user).
                 chat.Contact.Last = message.Content;
                 chat.Contact.LastDate = message.Created;
-                /*if (sent)
-                {
-                    
-                }*/
             }
         }
     }

@@ -14,7 +14,7 @@ namespace WebAPI.Controllers
     public class UsersController : Controller
     {
         public IConfiguration configuration;
-        private IUserService userService = new UserService();
+        private IUserService userService;
 
         public UsersController(IConfiguration config)
         {
@@ -51,6 +51,8 @@ namespace WebAPI.Controllers
         //[ValidateAntiForgeryToken]
         public IActionResult Post(string id, string password)
         {
+            userService = new UserService();
+
             if (validate(id, password)) // Checking if this id exists, and if the password is the right password.
             {
                 var claims = new[]
@@ -68,7 +70,7 @@ namespace WebAPI.Controllers
                     configuration["JWTParams:Issuer"],
                     configuration["JWTParams:Audience"],
                     claims,
-                    expires: DateTime.UtcNow.AddMinutes(120), // ?
+                    expires: DateTime.UtcNow.AddDays(1),
                     signingCredentials: mac);
 
                 Global.Id = id;

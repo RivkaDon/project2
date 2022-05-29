@@ -22,7 +22,7 @@ namespace WebAPI.Controllers
 
         private int updateChat(string from, string to, string content)
         {
-            chatService = new ChatService(from);
+            chatService = new ChatService();
             Chat c = chatService.Get(to);
 
             if (c != null && content != null)
@@ -51,7 +51,7 @@ namespace WebAPI.Controllers
                 return;
             }
 
-            userService = new UserService(to);
+            userService = new UserService();
 
             User user1 = userService.Get(to);
             if (user1 == null) // Checking if the user exists.
@@ -60,7 +60,7 @@ namespace WebAPI.Controllers
                 return;
             }
 
-            chatService = new ChatService(to);
+            chatService = new ChatService();
             Chat chat = chatService.Get(from);
 
             if (chat == null) // Checking if the contact exists (as one of the user's contacts).
@@ -78,7 +78,8 @@ namespace WebAPI.Controllers
                 chat = chatService.Get(from);
             }
 
-            IMessageService messageService = new MessageService(chat, to);
+            //IMessageService messageService = new MessageService(chat, to);
+            IMessageService messageService = new MessageService(chat);
             messageService.SendMessage(request.Content, false);
 
             if (updateChat(from, to, request.Content) > 0)
@@ -88,8 +89,6 @@ namespace WebAPI.Controllers
             }
 
             Response.StatusCode = 201;
-
-            // update the second user
         }
     }
 }
