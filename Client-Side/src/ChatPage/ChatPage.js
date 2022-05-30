@@ -11,6 +11,8 @@ import { NavLink } from 'react-router-dom';
 
 
 function ChatPage({}) {
+
+    
     const usersRef = useRef([]);
     var allUsersArr = [];
     const location = useLocation();
@@ -65,45 +67,71 @@ function ChatPage({}) {
             setMyConn(signalrCon);
     }, []);
 
+    const showContacts = async()=> {
+        let j = new Array();    
+        await fetch('https://localhost:7105/api/Contacts', {method:'GET'
+        , headers: {
+            "Authorization" : "Bearer " + token
+        }}).then(response => response.json())
+            .then(data => j = data);
+           
+            let myMap;
+            let myArr = new Array;
+            var i = 0;
+            j.forEach(element => {
+                myMap = new Array(Object.entries(element));
+                myArr[i] = myMap;
+                i++;
+            });
+            setList(myArr);
+        } 
+
+    const showAllContactMesseges = async(id)=> {
+        let j = new Array();
+        await fetch('https://localhost:7105/api/Contacts/'+id+'/messages', {method:'GET'
+        , headers: {
+            "Authorization" : "Bearer " + token
+        }}).then(response => response.json())
+        .then(data => j = data);
+        let myMap;
+        let myArr = new Array;
+        var i = 0;
+        j.forEach(element => {
+            myMap = new Array(Object.entries(element));
+            myArr[i] = myMap.at(0);
+            i++;
+        });
+        setMessages(myArr);
+        
+        latestMeseges.current = myArr;
+        }
+
     useEffect(() => {
+        
         if (myConn) {
             myConn.start()
                 .then(result => {
                     
-    
-                    myConn.on('Receive',(mc) => {
-                        console.log("#the contact id= " + mc.Contact);
-                        console.log("#thUserId= " + mc.UserId);
+                    myConn.on('Receive',(sendPerson, getPerson) => {
+                        console.log("#the contact id= " + sendPerson);
+                        console.log("#thUserId= " + getPerson);
                         console.log("#currentuser= " + currentUser);
-                        if(currentUser === mc.Contact || currentUser === mc.UserId) {
+                        if(currentUser === sendPerson || currentUser === getPerson) {
                             console.log("in if");
-                            const updatedChat = [...latestMeseges.current];
-                            var arr1 = [['id', mc.Contact],['content', mc.Message.Content],
-                            ['created', mc.Message.Created],['sent', true]];
-                            updatedChat.push(mc);
-                            setMessages(updatedChat);
-
-                            var j = new Array();
-                            const func = async()=> {
-                            console.log(token + "--------------------");    
-                            await fetch('https://localhost:7105/api/Contacts', {method:'GET'
-                            , headers: {
-                            "Authorization" : "Bearer " + token
-                            }}).then(response => response.json())
-                            .then(data => {if (data) {j = data}});
-       
-                            let myMap;
-                            let myArr = new Array;
-                            var i = 0;
-                            j.forEach(element => {
-                            myMap = new Array(Object.entries(element));
-                            myArr[i] = myMap;
-                            i++;
-                            });
-                            setList(myArr);
-                            console.log("my arr= " + myArr);
-                            }
-                            func()
+                            showAllContactMesseges(sendPerson);
+                            showContacts();
+                            //getMessages;
+                            //const updatedChat = [...latestMeseges.current];
+                            //var arr1 = [['id', sendPerson],['content',getPerson],
+                            //['created', ms],['sent', true]];
+                            //updatedChat.push(arr1);
+                            //setMessages(updatedChat);
+                           // OnClickChat()
+                           //console.log("getContactid= " + getContactId);
+                           //if(getContactId === getPerson || getContactId === sendPerson) {
+                           //    console.log("1getContactid= " + getContactId);
+                            //   OnClickChat();
+                          // }
                         }                       
                     });
                 })
@@ -247,7 +275,7 @@ function ChatPage({}) {
         // to get messeges of clicked contact from server
     useEffect(()=>{
         var id = getContactId;
-        console.log("contact id= " + id);
+        //console.log("contact id= " + id);
         var j = new Array();
         if (getFlag) {
         const func = async()=> {
