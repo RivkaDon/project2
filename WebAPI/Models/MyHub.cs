@@ -13,6 +13,10 @@ namespace WebAPI.Models
             mc.Contact = contactId;
             mc.Message = message;
             mc.UserId = Global.Id;
+            Console.WriteLine("mc.contact inside send= " + mc.Contact);
+            Console.WriteLine("mc.meesa inside send= " + mc.Contact);
+            Console.WriteLine("mc.contact inside send= " + mc.Contact);
+
             await Clients.All.SendAsync("Receive", mc);
 
         }

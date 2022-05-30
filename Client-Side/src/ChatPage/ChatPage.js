@@ -66,11 +66,12 @@ function ChatPage({}) {
     }, []);
 
     useEffect(() => {
+        
         if (myConn) {
             myConn.start()
                 .then(result => {
                     
-    
+                    debugger
                     myConn.on('Receive',(mc) => {
                         console.log("#the contact id= " + mc.Contact);
                         console.log("#thUserId= " + mc.UserId);
@@ -80,30 +81,8 @@ function ChatPage({}) {
                             const updatedChat = [...latestMeseges.current];
                             var arr1 = [['id', mc.Contact],['content', mc.Message.Content],
                             ['created', mc.Message.Created],['sent', true]];
-                            updatedChat.push(mc);
+                            updatedChat.push(arr1);
                             setMessages(updatedChat);
-
-                            var j = new Array();
-                            const func = async()=> {
-                            console.log(token + "--------------------");    
-                            await fetch('https://localhost:7105/api/Contacts', {method:'GET'
-                            , headers: {
-                            "Authorization" : "Bearer " + token
-                            }}).then(response => response.json())
-                            .then(data => {if (data) {j = data}});
-       
-                            let myMap;
-                            let myArr = new Array;
-                            var i = 0;
-                            j.forEach(element => {
-                            myMap = new Array(Object.entries(element));
-                            myArr[i] = myMap;
-                            i++;
-                            });
-                            setList(myArr);
-                            console.log("my arr= " + myArr);
-                            }
-                            func()
                         }                       
                     });
                 })
@@ -247,7 +226,7 @@ function ChatPage({}) {
         // to get messeges of clicked contact from server
     useEffect(()=>{
         var id = getContactId;
-        console.log("contact id= " + id);
+        //console.log("contact id= " + id);
         var j = new Array();
         if (getFlag) {
         const func = async()=> {
