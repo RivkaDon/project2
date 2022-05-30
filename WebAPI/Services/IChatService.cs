@@ -5,6 +5,7 @@ namespace WebAPI.Services
     public interface IChatService
     {
         public List<Chat> GetAllChats(string id);
+        public Contact GetContact(string userId, string contactId);
         public Chat Get(string id1, string id2);
         public int Edit(string id, Contact contact = null, MessageList messageList = null);
         public int Delete(string id1, string id2);
