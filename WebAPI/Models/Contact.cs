@@ -8,6 +8,7 @@
         public string Last { get; set; }
         public DateTime? LastDate { get; set; }
 
+        public Contact() { }
         public Contact(Contact c)
         {
             Id = c.Id;
@@ -17,11 +18,11 @@
             LastDate = c.LastDate;
         }
 
-        public Contact(string Id1, string Name1, string Server1)
+        public Contact(string id, string name, string server)
         {
-            Id = Id1;
-            Name = Name1;
-            Server = Server1;
+            Id = id;
+            Name = name;
+            Server = server;
             Last = null;
             LastDate = null;
         }

@@ -3,6 +3,13 @@
     public class UserList
     {
         private List<User> users = new List<User>();
+        public UserList(List<User> usersList)
+        {
+            foreach (User user in usersList)
+            {
+                users.Add(user);
+            }
+        }
 
         public UserList()
         {
@@ -26,12 +33,6 @@
         {
             ContactList contactList = new ContactList();
 
-            //contactList.Add(new Contact() { Id = "harry", Name = "Harry Potter", Server = Global.Server });
-            //contactList.Add(new Contact() { Id = "queen", Name = "Queen Elisabeth", Server = Global.Server });
-            //contactList.Add(new Contact() { Id = "donald", Name = "Donald Trump", Server = Global.Server });
-            //contactList.Add(new Contact() { Id = "snow", Name = "Snow white", Server = Global.Server });
-            //contactList.Add(new Contact() { Id = "olof", Name = "Olof snow man", Server = Global.Server });
-
             contactList.Add(new Contact("harry", "Harry Potter",  Global.Server ));
             contactList.Add(new Contact("queen", "Queen Elisabeth",  Global.Server ));
             contactList.Add(new Contact("donald", "Donald Trump", Global.Server ));
@@ -49,7 +50,7 @@
         /// <returns></returns>
         private ContactList GetContactList(ContactList contacts, string id)
         {
-            ContactList contactList = new ContactList();
+            ContactList contactList = new ContactList(id);
             foreach (Contact contact in contacts.Contacts)
             {
                 if (contact.Id != id) contactList.Add(new Contact(contact));
@@ -75,7 +76,7 @@
         /// <returns></returns>
         private ChatList GetChatList(ChatList chats, string id)
         {
-            ChatList chatList = new ChatList();
+            ChatList chatList = new ChatList(id);
             foreach (Chat chat in chats.Chats)
             {
                 if (chat.Id != id) chatList.Add(new Chat(chat));

@@ -2,7 +2,26 @@
 {
     public class ChatList
     {
-        private List<Chat> chats = new List<Chat>();
+        public string Id { get; set; }
+        private List<Chat> chats;
+
+        public ChatList(string id)
+        {
+            this.Id = id;
+            this.chats = new List<Chat>();
+        }
+
+        public ChatList(string id, List<Chat> chats)
+        {
+            this.Id = id;
+            this.chats = chats.ConvertAll(chat => new Chat(chat.Id, chat.Contact, chat.Messages));
+        }
+
+
+        public ChatList()
+        {
+            this.chats = new List<Chat>();
+        }
 
         public List<Chat> Chats
         {

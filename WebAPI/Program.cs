@@ -10,11 +10,25 @@ using WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<WebAPIContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("WebAPIContext") ?? throw new InvalidOperationException("Connection string 'WebAPIContext' not found.")));
-builder.Services.AddScoped<IUserService, UserService>();
+/*builder.Services.AddDbContext<WebAPIContext>(options =>
+    options.UseMySQL(builder.Configuration.GetConnectionString("WebAPIContext") ?? throw new InvalidOperationException("Connection string 'WebAPIContext' not found.")));*/
+
+/*builder.Services.AddDbContext<WebAPIContext>(options =>
+    options.UseMySQL("server=localhost;port=3306;database=Users;user=root;password=maria"));*/
+
+string connectionString = "server=localhost;port=3306;database=Users;user=root;password=maria";
+
+builder.Services.AddDbContext<WebAPIContext>(dbContextOptions => dbContextOptions
+                .UseMySql(connectionString, MariaDbServerVersion.AutoDetect(connectionString)));
+
+
+builder.Services.AddControllers();
+//builder.Services.AddScoped<WebAPIContext, WebAPIContext>();
+builder.Services.AddScoped<IUserService, UserServiceDB>();
 builder.Services.AddScoped<IChatService, ChatService>();
 // Add services to the container.
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

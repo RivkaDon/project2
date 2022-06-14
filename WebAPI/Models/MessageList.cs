@@ -2,12 +2,14 @@
 {
     public class MessageList
     {
+        public string Id { get; set; }
         private List<Message> messages = new List<Message>();
 
         public MessageList() { }
 
-        public MessageList(MessageList m)
+        public MessageList(string id, MessageList m)
         {
+            Id = id;
             foreach (Message message in m.messages)
             {
                 messages.Add(new Message(message));
