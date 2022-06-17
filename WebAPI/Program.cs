@@ -22,10 +22,11 @@ builder.Services.AddDbContext<WebAPIContext>(dbContextOptions => dbContextOption
                 .UseMySql(connectionString, MariaDbServerVersion.AutoDetect(connectionString)));
 
 
-builder.Services.AddControllers();
 //builder.Services.AddScoped<WebAPIContext, WebAPIContext>();
-builder.Services.AddScoped<IUserService, UserServiceDB>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IInvitationService, InvitationService>();
+builder.Services.AddScoped<ITransferService, TransferService>();
 // Add services to the container.
 
 

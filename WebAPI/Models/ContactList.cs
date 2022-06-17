@@ -2,19 +2,12 @@
 {
     public class ContactList
     {
-        public string Id { get; set; }
         private List<Contact> contacts;
 
-        public ContactList(string id)
+        
+        public ContactList(List<Contact> contacts)
         {
-            this.Id = id;
-            this.contacts = new List<Contact>();
-        }
-
-        public ContactList(string id, List<Contact> contacts)
-        {
-            this.Id = id;
-            this.contacts = contacts.ConvertAll(contact => new Contact(contact.Id, contact.Name, contact.Server));
+            this.contacts = contacts.ConvertAll(contact => new Contact(contact.Id, contact.Name, contact.Server, contact.Last, contact.LastDate));
         }
 
 

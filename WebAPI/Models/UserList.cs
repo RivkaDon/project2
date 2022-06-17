@@ -14,18 +14,13 @@
         public UserList()
         {
             ContactList contacts = CreateContacts();
-            ChatList chats = CreateChats(contacts);
+            //ChatList chats = CreateChats(contacts);
 
-            this.Add(new User { Id = "harry", Name = "Harry Potter", Password = "12345", Contacts = GetContactList(contacts, "harry"), Chats = GetChatList(chats, "harry") });
-            this.Add(new User { Id = "queen", Name = "Queen Elisabeth", Password = "12345", Contacts = GetContactList(contacts, "queen"), Chats = GetChatList(chats, "queen") });
-            this.Add(new User { Id = "donald", Name = "Donald Trump", Password = "12345", Contacts = GetContactList(contacts, "donald"), Chats = GetChatList(chats, "donald") });
-            this.Add(new User { Id = "snow", Name = "Snow white", Password = "12345", Contacts = GetContactList(contacts, "snow"), Chats = GetChatList(chats, "snow") });
-            this.Add(new User { Id = "olof", Name = "Olof snow man", Password = "12345", Contacts = GetContactList(contacts, "olof"), Chats = GetChatList(chats, "olof") });
-            this.Add(new User { Id = "1", Name = "A", Password = "12345", Contacts = new ContactList(), Chats = new ChatList() });
-            this.Add(new User { Id = "2", Name = "B", Password = "12345", Contacts = new ContactList(), Chats = new ChatList() });
-            this.Add(new User { Id = "3", Name = "C", Password = "12345", Contacts = new ContactList(), Chats = new ChatList() });
-            this.Add(new User { Id = "4", Name = "D", Password = "12345", Contacts = new ContactList(), Chats = new ChatList() });
-
+            this.Add(new User { Id = "harry", Name = "Harry Potter", Password = "12345", Contacts = GetContactList(contacts, "harry")});
+            this.Add(new User { Id = "queen", Name = "Queen Elisabeth", Password = "12345", Contacts = GetContactList(contacts, "queen") });
+            this.Add(new User { Id = "donald", Name = "Donald Trump", Password = "12345", Contacts = GetContactList(contacts, "donald") });
+            this.Add(new User { Id = "snow", Name = "Snow white", Password = "12345", Contacts = GetContactList(contacts, "snow") });
+            this.Add(new User { Id = "olof", Name = "Olof snow man", Password = "12345", Contacts = GetContactList(contacts, "olof") });
             //CreateChats();
         }
 
@@ -48,22 +43,23 @@
         /// <param name="contacts"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        private ContactList GetContactList(ContactList contacts, string id)
+        private List<Contact> GetContactList(ContactList contacts, string id)
         {
-            ContactList contactList = new ContactList(id);
+            List<Contact> list = new List<Contact>();
             foreach (Contact contact in contacts.Contacts)
             {
-                if (contact.Id != id) contactList.Add(new Contact(contact));
+                if (contact.Id != id) list.Add(new Contact(contact));
             }
-            return contactList;
+            return list;
         }
 
         private ChatList CreateChats(ContactList contacts)
         {
             ChatList chatList = new ChatList();
+            int i = 1;
             foreach (Contact contact in contacts.Contacts)
             {
-                chatList.Add(new Chat (contact.Id, contact, new MessageList() ));
+                //chatList.Add(new Chat (contact.Id, contact, new MessageList() ));
             }
             return chatList;
         }
@@ -74,7 +70,7 @@
         /// <param name="chats"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        private ChatList GetChatList(ChatList chats, string id)
+        /*private ChatList GetChatList(ChatList chats, string id)
         {
             ChatList chatList = new ChatList(id);
             foreach (Chat chat in chats.Chats)
@@ -82,14 +78,14 @@
                 if (chat.Id != id) chatList.Add(new Chat(chat));
             }
             return chatList;
-        }
+        }*/
 
         public List<User> Users
         {
             get { return users; }
         }
 
-        public ContactList GetContactList(User user)
+        /*public ContactList GetContactList(User user)
         {
             if (user == null) return null;
             if (!users.Contains(user)) return null;
@@ -101,7 +97,7 @@
             if (user == null) return null;
             if (!users.Contains(user)) return null;
             return user.Chats;
-        }
+        }*/
 
         public void Add(User user)
         {
@@ -124,7 +120,7 @@
             }
         }
 
-        public void DeleteContact(User user, Contact contact)
+        /*public void DeleteContact(User user, Contact contact)
         {
             if (contact == null) return;
 
@@ -144,7 +140,7 @@
             if (!chatList.Chats.Contains(chat)) return;
 
             chatList.Remove(chat);
-        }
+        }*/
     }
 
 }

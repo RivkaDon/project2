@@ -26,5 +26,13 @@
             Last = null;
             LastDate = null;
         }
+        public Contact(string id, string name, string server, string last, DateTime? lastDate)
+        {
+            Id = id;
+            Name = name;
+            Server = server;
+            Last = last;
+            LastDate = lastDate;
+        }
     }
 }

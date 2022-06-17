@@ -7,45 +7,21 @@ using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ContactsController : ControllerBase
     {
-        private IContactService contactService;
         private IChatService chatService;
-        private IMessageService messageService;
         private IUserService userService;
 
         public ContactsController(IUserService us, IChatService cs)
         {
-            //Global.Id = "harry";
-            //Global.Server = "localhost:7105";
-            
-            //chatService = new ChatService();
-            messageService = new MessageService();
-            //userService = new UserService();
-            
             chatService = cs;
             userService = us;
-
-            /*Global.Id = "harry";
-            chatService = new ChatService(Global.Id);*/
         }
 
-        private int setMessageService(string id1, string id2)
-        {
-            Chat c = chatService.Get(id1, id2);
-            if (c != null)
-            {
-                //messageService = new MessageService(c);
-                return 0;
-            }
-            return 1;
-        }
-
-
-        private int updateChat(string action, string id1, string id2 = null, string content = null, DateTime? now = null)
+        /*private int updateChat(string action, string id1, string id2 = null, string content = null, DateTime? now = null)
         {
             Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
             Chat c = chatService.Get(id1, Global.Id); // Global.id
@@ -73,7 +49,7 @@ namespace WebAPI.Controllers
             }
             if (!userService.Exists(id1)) return 0;
             return 1;
-        }
+        }*/
 
         /// <summary>
         /// Returns all contacts.
@@ -83,9 +59,8 @@ namespace WebAPI.Controllers
         public List<Contact> Get()
         {
             Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
-            contactService = new ContactService(Global.Id);
             Response.StatusCode = 200;
-            return contactService.GetAllContacts();
+            return userService.GetAllContacts(Global.Id);
         }
 
         /// <summary>
@@ -97,8 +72,7 @@ namespace WebAPI.Controllers
         public Contact Get(string id)
         {
             Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
-            contactService = new ContactService(Global.Id);
-            Contact contact = contactService.Get(id);
+            Contact contact = userService.GetContact(Global.Id, id);
             if (contact == null)
             {
                 Response.StatusCode = 404;
@@ -122,7 +96,7 @@ namespace WebAPI.Controllers
                 Response.StatusCode = 404;
                 return null;
             }*/
-            List<Message> messages = messageService.GetAllMessages(Global.Id, id);
+            List<Message> messages = chatService.GetMessageBetween(Global.Id, id);
 
             if (messages == null)
             {
@@ -148,7 +122,7 @@ namespace WebAPI.Controllers
                 Response.StatusCode = 404;
                 return null;
             }*/
-            Message message = messageService.Get(id1, id2);
+            Message message = chatService.GetMessageById(Global.Id, id1, id2);
 
             if (message == null)
             {
@@ -168,7 +142,13 @@ namespace WebAPI.Controllers
         {
             Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
             // setChatService(Global.Id);
-            int num = chatService.CreateChat(Global.Id, request.Id, request.Name, request.Server);
+            int num = userService.CreateContact(Global.Id, request.Id, request.Name, request.Server);
+            if (num > 0)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
+            num = chatService.CreateChat(Global.Id, request.Id, request.Name, request.Server);
             if (num > 0)
             {
                 Response.StatusCode = 404;
@@ -192,8 +172,12 @@ namespace WebAPI.Controllers
                 return;
             }*/
 
-            messageService.SendMessage(Global.Id, id, request.Content, true);
-            messageService.SendMessage(id, Global.Id, request.Content, false);
+            if (chatService.CreateMessage(Global.Id, id, request.Content) == 0)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
+            //messageService.SendMessage(id, Global.Id, request.Content, false);
 
             /*if (updateChat("post", id, null, request.Content) > 0)
             {
@@ -212,17 +196,10 @@ namespace WebAPI.Controllers
         public void Put(string id, [FromBody] RequestEditContact request)
         {
             Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
-            contactService = new ContactService(Global.Id);
-            Contact contact = contactService.Get(id);
+            Contact contact = userService.GetContact(Global.Id, id);
             if (contact != null)
             {
-                if (contactService.Edit(id, request.Name, request.Server) > 0)
-                {
-                    Response.StatusCode = 404;
-                    return;
-                }
-
-                if (chatService.Edit(id, contact) > 0)
+                if (userService.EditContact(Global.Id, id, request.Name, request.Server, null) > 0)
                 {
                     Response.StatusCode = 404;
                     return;
@@ -230,7 +207,6 @@ namespace WebAPI.Controllers
                 Response.StatusCode = 204;
                 return;
             }
-
             Response.StatusCode = 404;
         }
 
@@ -246,22 +222,15 @@ namespace WebAPI.Controllers
             Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
             //bool b1 = setMessageService(Global.Id, id1) > 0;
             //bool b2 = messageService.Get(id1, id2) == null;
-            if (messageService.Get(id1, id2) == null)
+            if (chatService.GetMessageById(Global.Id, id1, id2) == null)
             {
                 Response.StatusCode = 404;
                 return;
             }
 
             DateTime now = DateTime.Now;
-            messageService.Edit(id2, true, request.Content, now);
-
-            if (updateChat("put", id1, id2, request.Content, now) > 0)
-            {
-                Response.StatusCode = 404;
-            }
-
+            chatService.EditMessageById(Global.Id, id1, id2,request.Content);
             Response.StatusCode = 204;
-
         }
 
         /// <summary>
@@ -272,7 +241,7 @@ namespace WebAPI.Controllers
         public void Delete(string id)
         {
             Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
-            if (chatService.Delete(Global.Id, id) > 0)
+            if (userService.DeleteContact(Global.Id, id) > 0)
             {
                 Response.StatusCode = 404;
                 return;
@@ -289,26 +258,16 @@ namespace WebAPI.Controllers
         public void Delete(string id1, string id2)
         {
             Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
-            contactService = new ContactService(Global.Id);
-
-            //bool b1 = setMessageService(Global.Id, id1) > 0;
-            //bool b2 = messageService.Get(id2) == null;
-            if (messageService.Get(id1, id2) == null)
+            if (chatService.Get(Global.Id, id1) == null)
             {
                 Response.StatusCode = 404;
                 return;
             }
-
-            messageService.Delete(id2);
-            List<Message> messages = messageService.GetAllMessages(Global.Id, id1);
-            contactService.UpdateLastDate(id1, messages);
-
-            if (updateChat("delete", id1, id2) > 0)
+            if (chatService.DeleteMessage(Global.Id, id1, id2) > 0)
             {
                 Response.StatusCode = 404;
                 return;
             }
-
             Response.StatusCode = 204;
         }
     }

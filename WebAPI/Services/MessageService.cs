@@ -5,28 +5,45 @@ namespace WebAPI.Services
     public class MessageService : IMessageService
     {
         private IChatService chatService;
+        private List<Message> messages;
         //private Chat chat;
 
-        public MessageService()
+        public MessageService(IChatService chatService)
         {
-            chatService = new ChatService();
-            //chat = c;
+            this.chatService = chatService;
+            this.messages = new List<Message>();
         }
 
-        public List<Message> GetAllMessages(string userId, string contactId)
+        public MessageService(IChatService chatService, List<Message> list)
         {
-            Chat chat = chatService.Get(userId, contactId);
-            if (chat == null) return null;
-            if (chat.Messages == null) return null;
-            return chat.Messages.Messages;
+            this.chatService = chatService;
+            this.messages = list;
         }
 
-        public int Count(string id)
+        public List<Message> GetAllMessages()
         {
-            return GetAllMessages(Global.Id, id).Count;
+            return messages;
         }
 
-        public string lastId(string userId, string contactId)
+        public List<Message> getMessageByIds(string sId, string rId)
+        {
+            List<Message> messages = new List<Message>();
+            foreach(Message m in messages)
+            {
+                if((m.senderId == sId && m.receiverId == rId) || (m.senderId == rId && m.receiverId == sId))
+                {
+                    messages.Add(m);
+                }
+            }
+            return messages;
+        }
+
+        public int Count(string sId, string rId)
+        {
+            return getMessageByIds(sId, rId).Count;
+        }
+
+        /*public string lastId(string userId, string contactId)
         {
             List<Message> messages = GetAllMessages(userId, contactId);
             int len = messages.Count;
@@ -35,84 +52,57 @@ namespace WebAPI.Services
                 return messages[len - 1].Id;
             }
             return "";
+        }*/
+
+        public bool Exists(string sId, string rId)
+        {
+            return Count(sId, rId) > 0;
         }
 
-        public bool Exists(string id1, string id2)
+        public List<Message> messagesById(string id)
         {
-            if (string.IsNullOrEmpty(id1) || string.IsNullOrEmpty(id2)) return false;
-
-            List<Message> messages = GetAllMessages(Global.Id, id1);
-            if (messages == null) return false;
-
-            foreach (Message message in messages)
+            List<Message> messages = new List<Message>();
+            foreach(Message m in this.messages)
             {
-                if (message.Id == id2) return true;
+                if(m.senderId == id || m.receiverId== id)
+                {
+                    messages.Add(m);
+                }
             }
-            return false;
+            return messages;
         }
 
         public Message Get(string id1, string id2)
         {
-            if (!Exists(id1, id2)) return null;
-            return GetAllMessages(Global.Id, id1).Find(x => x.Id == id2);
+            List<Message> messages = messagesById(id1);
+            foreach(Message m in messages)
+            {
+                if(m.Id == id2)
+                {
+                    return m;
+                }
+            }
+            return null;
+        }
+
+        public List<Message> GetAllMessages(string userId, string contactId)
+        {
+            throw new NotImplementedException();
         }
 
         public void Edit(string id, bool sent, string content = null, DateTime? created = null)
         {
-            Chat chat = chatService.Get(Global.Id, id);
-            Message message = Get(Global.Id, id);
-            if (message != null)
-            {
-                chat.Messages.Edit(message, sent, content, created);
-
-                // Checking is the message was sent by the user (and not to the user).
-                chat.Contact.Last = message.Content;
-                chat.Contact.LastDate = message.Created;
-            }
+            throw new NotImplementedException();
         }
 
         public void Delete(string id)
         {
-            Chat chat = chatService.Get(Global.Id, id);
-            Message message = Get(Global.Id, id);
-            if (message != null)
-            {
-                chatService.DeleteMessage(chat, message);
-            }
+            throw new NotImplementedException();
         }
 
         public void SendMessage(string id1, string id2, string content, bool sent)
         {
-            if (content != null)
-            {
-                Chat chat = chatService.Get(id1, id2);
-
-                Message message = new Message();
-                //int len = GetAllMessages(id2, id1).Count; // 
-
-                DateTime date = DateTime.Now;
-
-                var random = new Random();
-                int randNum = random.Next(0, 999);
-
-                message.Id = "" + date + randNum;
-                message.Created = date;
-                message.Content = content;
-                message.Sent = sent;
-
-                chat.Messages.Add(message);
-
-
-                // Checking if the message was sent by the user (and not to the user).
-                chat.Contact.Last = message.Content;
-                chat.Contact.LastDate = message.Created;
-
-                Contact contact = chatService.GetContact(id1, id2);
-                contact.Last = message.Content;
-                contact.LastDate = message.Created;
-
-                //chatService.CreateMessage(id1, chat, message);
-            }
+            throw new NotImplementedException();
         }
     }
 }

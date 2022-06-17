@@ -9,18 +9,105 @@ namespace WebAPI.Services
 
         public UserService()
         {
-            //users = new UserList();
+            Global.Server = "localhost:7105";
         }
 
-        /*public static void SetUsers()
-        {
-            users = new UserList();
-        }*/
 
         public List<User> GetAllUsers()
         {
             return users.Users;
         }
+
+        /*
+         * Contact section
+         */
+
+        public List<Contact> GetAllContacts(string id)
+        {
+            User user = Get(id);
+            if (user == null) return null;
+            if (user.Contacts == null) return null;
+            return user.Contacts;
+        }
+
+        public bool ContactExists(string id, string contactId)
+        {
+            if (string.IsNullOrEmpty(id)) return false;
+
+            List<Contact> contacts = GetAllContacts(id);
+            if (contacts == null) return false;
+
+            foreach (var contact in contacts)
+            {
+                if (contact.Id == contactId) return true;
+            }
+            return false;
+        }
+
+        public Contact GetContact(string id, string contactId)
+        {
+            if (!ContactExists(id, contactId)) return null;
+            return GetAllContacts(id).Find(e => e.Id == contactId);
+        }
+
+        public int EditContact(string id, string contactId, string name = null, string server = null, string last = null, DateTime? lastDate = null)
+        {
+            if (Get(id) == null) return 1;
+            Contact contact = Get(id).Contacts.FirstOrDefault(e => e.Id == contactId);
+            if (contact != null)
+            {
+                if (name != null)
+                {
+                    contact.Name = name;
+                }
+                if (server != null)
+                {
+                    contact.Server = server;
+                }
+                if (last != null)
+                {
+                    contact.Last = last;
+                }
+                if (lastDate != null)
+                {
+                    contact.LastDate = lastDate;
+                }
+                return 0;
+            }
+            return 1;
+        }
+
+
+        public int DeleteContact(string id, string contactId)
+        {
+            User user = Get(id);
+            if (user != null)
+            {
+                var contact = Get(id).Contacts.FirstOrDefault(e => e.Id == contactId);
+                if (contact != null)
+                {
+                    user.Contacts.Remove(contact);
+                    return 0;
+                }
+            }
+            return 1;
+        }
+
+        public int CreateContact(string id, string contactId, string name, string server)
+        {
+            if (!Exists(id)) return 1;
+            User user = Get(id);
+            user.Contacts.Add(new Contact(contactId, name, server));
+            return 0;
+        }
+
+
+
+        /*
+         * Finish contact
+         */
+
+
 
         public bool Exists(string id)
         {
@@ -48,6 +135,9 @@ namespace WebAPI.Services
             }
         }
 
+        
+
+        
         public void Delete(string id)
         {
             if (Exists(id)) GetAllUsers().Remove(Get(id));
@@ -58,39 +148,13 @@ namespace WebAPI.Services
             if (Exists(id)) return 1;
 
             users.Add(new User {
-                Id = id, Name = name, Password = password, Contacts = new ContactList(), Chats = new ChatList()
-            });
+                Id = id, Name = name, Password = password, Contacts = new List<Contact>()});
             return 0;
         }
 
-        public int CreateContact(string id1, string id2, string name, string server)
-        {
-            User user = Get(id1);
-            if (user != null)
-            {
-                /*Contact contact = new Contact()
-                {
-                    Id = id2,
-                    Name = name,
-                    Server = server,
-                    Last = null,
-                    LastDate = null
-                };*/
-                Contact contact = new Contact(id2, name, server);
-                user.Contacts.Add(contact);
+        
 
-                Chat chat = new Chat(
-                    id2,
-                    contact,
-                    new MessageList()
-                );
-
-                user.Chats.Add(chat);
-            }
-            return 0;
-        }
-
-        public int updateUser(string id, Contact contact, string last, DateTime? lastDate)
+        /*public int updateUser(string id, Contact contact, string last, DateTime? lastDate)
         {
             User user = Get(id);
             if (user == null) return 1;
@@ -98,9 +162,9 @@ namespace WebAPI.Services
 
             user.Contacts.Update(contact, last, lastDate);
             return 0;
-        }
+        }*/
 
-        public int CreateChat(string id1, string id2, string name, string server)
+        /*public int CreateChat(string id1, string id2, string name, string server)
         {
             if (!Exists(id1)) return 1;
             return CreateContact(id1, id2, name, server);
@@ -122,6 +186,6 @@ namespace WebAPI.Services
             User user = Get(id);
             DeleteContact(id, chat.Contact);
             users.DeleteChat(user, chat);
-        }
+        }*/
     }
 }

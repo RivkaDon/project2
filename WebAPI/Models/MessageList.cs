@@ -37,7 +37,7 @@
 
                 if (content != null) messages[index].Content = content;
                 if (created != null) messages[index].Created = created;
-                messages[index].Sent = sent;
+                //messages[index].Sent = sent;
             }
         }
 

@@ -10,8 +10,13 @@ namespace WebAPI.Controllers
     [ApiController]
     public class InvitationsController : ControllerBase
     {
-        private IInvitationService invitationService = new InvitationService();
+        private IInvitationService invitationService;
         public Boolean invited = false;
+
+        public InvitationsController(IInvitationService iService)
+        {
+            invitationService = iService;
+        }
 
         /// <summary>
         /// Sends an invitation to join a new chat (creates chat -> and then creates contact).

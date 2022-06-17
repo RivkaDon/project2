@@ -2,25 +2,27 @@
 {
     public class ChatList
     {
-        public string Id { get; set; }
         private List<Chat> chats;
 
-        public ChatList(string id)
+        public ChatList(List<Chat> chats)
         {
-            this.Id = id;
-            this.chats = new List<Chat>();
-        }
-
-        public ChatList(string id, List<Chat> chats)
-        {
-            this.Id = id;
-            this.chats = chats.ConvertAll(chat => new Chat(chat.Id, chat.Contact, chat.Messages));
+            this.chats = chats.ConvertAll(chat => new Chat(chat.Id, chat.ContactIdA, chat.ContactIdB, chat.Messages));
         }
 
 
         public ChatList()
         {
             this.chats = new List<Chat>();
+            this.chats.Add(new Chat("1", "harry", "queen", new MessageList()));
+            this.chats.Add(new Chat("2", "harry", "donald", new MessageList()));
+            this.chats.Add(new Chat("3", "harry", "snow", new MessageList()));
+            this.chats.Add(new Chat("4", "harry", "olof", new MessageList()));
+            this.chats.Add(new Chat("5", "queen", "donald", new MessageList()));
+            this.chats.Add(new Chat("6", "queen", "snow", new MessageList()));
+            this.chats.Add(new Chat("7", "queen", "olof", new MessageList()));
+            this.chats.Add(new Chat("8", "donald", "snow", new MessageList()));
+            this.chats.Add(new Chat("9", "donald", "olof", new MessageList()));
+            this.chats.Add(new Chat("10", "snow", "olof", new MessageList()));
         }
 
         public List<Chat> Chats
@@ -37,14 +39,15 @@
             }
         }
 
-        public void Edit(Chat chat, Contact contact = null, MessageList messageList = null)
+        public void Edit(Chat chat, string contactIdA = null, string contactIdB = null, MessageList messageList = null)
         {
             if (chat == null) return;
             if (chats.Contains(chat))
             {
                 int index = chats.IndexOf(chat);
 
-                if (contact != null) chats[index].Contact = contact;
+                if (contactIdA != null) chats[index].ContactIdA= contactIdA;
+                if (contactIdB != null) chats[index].ContactIdB = contactIdB;
                 if (messageList != null) chats[index].Messages = messageList;
             }
         }

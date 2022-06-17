@@ -6,8 +6,13 @@ namespace WebAPI.Services
     {
         private IUserService userService;
         private IChatService chatService;
-        private IContactService contactService;
         private bool transfered = false;
+
+        public InvitationService(IUserService userService, IChatService chatService)
+        {
+            this.chatService = chatService;
+            this.userService = userService;
+        }
 
         public void Transfer()
         {
@@ -34,17 +39,15 @@ namespace WebAPI.Services
         {
             if (from == null || to == null) return 1;
 
-            userService = new UserService();
             User user = userService.Get(to);
             if (user == null) return 1; // Checking if the user doesn't exist.
 
-            contactService = new ContactService(to);
-            Contact contact = contactService.Get(from);
-            if (contact != null) return 1; // Checking if the contact already exists (as one of the user's contacts).
-
-            chatService = new ChatService();
-            if (chatService.CreateChatInvitation(to, from, from, server) > 0) return 1;
-
+            if(userService.GetContact(to, from) != null)
+            {
+                return 1;
+            }
+            userService.CreateContact(to, from, from, server);
+            chatService.CreateChat(to, from, from, server);
             return 0;
         }
     }

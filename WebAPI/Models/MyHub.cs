@@ -9,6 +9,5 @@ namespace WebAPI.Models
             // string id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value; ?
             await Clients.All.SendAsync("Receive", message, contactId, Global.Id);
         }
-
     }
 }

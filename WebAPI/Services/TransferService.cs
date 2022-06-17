@@ -6,11 +6,12 @@ namespace WebAPI.Services
     public class TransferService : ITransferService
     {
         private IChatService chatService;
-        private IInvitationService invitationService = new InvitationService();
+        private IInvitationService invitationService;
 
-        public TransferService(string id)
+        public TransferService(IChatService chatService, IInvitationService invitationService)
         {
-            chatService = new ChatService();
+            this.chatService = chatService;
+            this.invitationService = invitationService;
         }
 
         public void transfer(User from, User to, string content)
@@ -18,17 +19,18 @@ namespace WebAPI.Services
             if (from == null || to == null) return;
             if (string.IsNullOrEmpty(content)) return;
 
-            chatService = new ChatService();
             Chat chat = chatService.Get(from.Id, to.Id);
 
             if (chat == null) // Checking if the contact exists (as one of the user's contacts).
             {
-                InvitationsController invitationsController = new InvitationsController();
+                InvitationsController invitationsController = new InvitationsController(invitationService);
                 RequestOfNewInvitation r = invitationService.Create(from.Id, to.Id, "localhost:7105");
 
                 invitationsController.Post(r); // Sending an invitation.
                 chatService.CreateChat(from.Id, to.Id, to.Name, r.Server);
             }
+
+            chatService.CreateMessage(from.Id, to.Id, content);
         }
     }
 }
