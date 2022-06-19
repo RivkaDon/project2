@@ -3,6 +3,7 @@
     public class ChatList
     {
         private List<Chat> chats;
+        public string id { get; set; }
 
         public ChatList(List<Chat> chats)
         {

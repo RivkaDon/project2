@@ -18,6 +18,7 @@
             receiverId = m.receiverId;
             senderId = m.senderId;
         }
+        public Message() { }
         public string Id { get; set; }
         
         public string Content { get; set; }

@@ -5,10 +5,10 @@
         private List<Contact> contacts;
 
         
-        public ContactList(List<Contact> contacts)
+        /*public ContactList(List<Contact> contacts)
         {
             this.contacts = contacts.ConvertAll(contact => new Contact(contact.Id, contact.Name, contact.Server, contact.Last, contact.LastDate));
-        }
+        }*/
 
 
         public ContactList()

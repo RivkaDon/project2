@@ -11,7 +11,7 @@ namespace WebAPI.Services
         public void EditMessageById(string id, string contactId, string messageId, string content);
         public bool Exists(string id1, string id2);
         public int CreateChat(string id1, string id2, string name, string server);
-        public int CreateMessage(string id1, string id2, string message);
-        public int DeleteMessage(string id, string contactId, string message);
+        public int CreateMessage(string id1, string id2, string content);
+        public int DeleteMessage(string id, string contactId, string messageId);
     }
 }

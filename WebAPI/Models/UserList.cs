@@ -13,29 +13,24 @@
 
         public UserList()
         {
-            ContactList contacts = CreateContacts();
+            //ContactList contacts = CreateContacts();
             //ChatList chats = CreateChats(contacts);
 
-            this.Add(new User { Id = "harry", Name = "Harry Potter", Password = "12345", Contacts = GetContactList(contacts, "harry")});
-            this.Add(new User { Id = "queen", Name = "Queen Elisabeth", Password = "12345", Contacts = GetContactList(contacts, "queen") });
-            this.Add(new User { Id = "donald", Name = "Donald Trump", Password = "12345", Contacts = GetContactList(contacts, "donald") });
-            this.Add(new User { Id = "snow", Name = "Snow white", Password = "12345", Contacts = GetContactList(contacts, "snow") });
-            this.Add(new User { Id = "olof", Name = "Olof snow man", Password = "12345", Contacts = GetContactList(contacts, "olof") });
-            //CreateChats();
+            this.Add(new User { Id = "harry", Name = "Harry Potter", Password = "12345", Contacts = GetContactList( "harry")});
+            this.Add(new User { Id = "queen", Name = "Queen Elisabeth", Password = "12345", Contacts = GetContactList( "queen") });
+            this.Add(new User { Id = "donald", Name = "Donald Trump", Password = "12345", Contacts = GetContactList( "donald") });
+            this.Add(new User { Id = "snow", Name = "Snow white", Password = "12345", Contacts = GetContactList( "snow") });
+            this.Add(new User { Id = "olof", Name = "Olof snow man", Password = "12345", Contacts = GetContactList( "olof") });
         }
 
-        private ContactList CreateContacts()
+        /*private ContactList CreateContacts()
         {
             ContactList contactList = new ContactList();
 
-            contactList.Add(new Contact("harry", "Harry Potter",  Global.Server ));
-            contactList.Add(new Contact("queen", "Queen Elisabeth",  Global.Server ));
-            contactList.Add(new Contact("donald", "Donald Trump", Global.Server ));
-            contactList.Add(new Contact("snow", "Snow white",Global.Server ));
-            contactList.Add(new Contact("olof", "Olof snow man", Global.Server ));
+            
 
             return contactList;
-        }
+        }*/
 
         /// <summary>
         /// Retrun a contact list that *doesn't* hold the contact with the given id.
@@ -43,20 +38,20 @@
         /// <param name="contacts"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        private List<Contact> GetContactList(ContactList contacts, string id)
+        private List<Contact> GetContactList(string id)
         {
             List<Contact> list = new List<Contact>();
-            foreach (Contact contact in contacts.Contacts)
-            {
-                if (contact.Id != id) list.Add(new Contact(contact));
-            }
+            if (id != "harry") list.Add(new Contact(id, "harry", "Harry Potter", Global.Server));
+            if (id != "queen") list.Add(new Contact(id, "queen", "Queen Elisabeth", Global.Server));
+            if (id != "donald") list.Add(new Contact(id, "donald", "Donald Trump", Global.Server));
+            if (id != "snow") list.Add(new Contact(id, "snow", "Snow white", Global.Server));
+            if (id != "olof") list.Add(new Contact(id, "olof", "Olof snow man", Global.Server));
             return list;
         }
 
         private ChatList CreateChats(ContactList contacts)
         {
             ChatList chatList = new ChatList();
-            int i = 1;
             foreach (Contact contact in contacts.Contacts)
             {
                 //chatList.Add(new Chat (contact.Id, contact, new MessageList() ));

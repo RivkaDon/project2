@@ -39,7 +39,7 @@ namespace WebAPI.Services
 
             foreach (var contact in contacts)
             {
-                if (contact.Id == contactId) return true;
+                if (contact.ContactId == contactId) return true;
             }
             return false;
         }
@@ -47,13 +47,13 @@ namespace WebAPI.Services
         public Contact GetContact(string id, string contactId)
         {
             if (!ContactExists(id, contactId)) return null;
-            return GetAllContacts(id).Find(e => e.Id == contactId);
+            return GetAllContacts(id).Find(e => e.ContactId == contactId);
         }
 
         public int EditContact(string id, string contactId, string name = null, string server = null, string last = null, DateTime? lastDate = null)
         {
             if (Get(id) == null) return 1;
-            Contact contact = Get(id).Contacts.FirstOrDefault(e => e.Id == contactId);
+            Contact contact = Get(id).Contacts.FirstOrDefault(e => e.ContactId == contactId);
             if (contact != null)
             {
                 if (name != null)
@@ -83,7 +83,7 @@ namespace WebAPI.Services
             User user = Get(id);
             if (user != null)
             {
-                var contact = Get(id).Contacts.FirstOrDefault(e => e.Id == contactId);
+                var contact = Get(id).Contacts.FirstOrDefault(e => e.ContactId == contactId);
                 if (contact != null)
                 {
                     user.Contacts.Remove(contact);
@@ -97,7 +97,7 @@ namespace WebAPI.Services
         {
             if (!Exists(id)) return 1;
             User user = Get(id);
-            user.Contacts.Add(new Contact(contactId, name, server));
+            user.Contacts.Add(new Contact(id, contactId, name, server));
             return 0;
         }
 

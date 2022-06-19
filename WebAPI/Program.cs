@@ -23,8 +23,8 @@ builder.Services.AddDbContext<WebAPIContext>(dbContextOptions => dbContextOption
 
 
 //builder.Services.AddScoped<WebAPIContext, WebAPIContext>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IUserService, UserServiceDB>();
+builder.Services.AddScoped<IChatService, ChatServiceDB>();
 builder.Services.AddScoped<IInvitationService, InvitationService>();
 builder.Services.AddScoped<ITransferService, TransferService>();
 // Add services to the container.
@@ -110,5 +110,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<MyHub>("/hubs/myChat");
+
+using(var db = new WebAPIContext()) await new UserServiceDB(db).InitializeUsers();
+
+using (var db = new WebAPIContext()) await new ChatServiceDB(db, new UserServiceDB(db)).InitializeChats();
+
+
 
 app.Run();

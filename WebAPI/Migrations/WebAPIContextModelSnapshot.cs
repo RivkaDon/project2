@@ -24,43 +24,46 @@ namespace WebAPI.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("ChatListId")
+                    b.Property<string>("ChatListid")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("ContactId")
-                        .HasColumnType("varchar(255)");
+                    b.Property<string>("ContactIdA")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ContactIdB")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("MessagesId")
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChatListId");
-
-                    b.HasIndex("ContactId");
+                    b.HasIndex("ChatListid");
 
                     b.HasIndex("MessagesId");
 
-                    b.ToTable("Chat");
+                    b.ToTable("Chats");
                 });
 
             modelBuilder.Entity("WebAPI.Models.ChatList", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("id")
                         .HasColumnType("varchar(255)");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("ChatList");
                 });
 
             modelBuilder.Entity("WebAPI.Models.Contact", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)")
+                        .HasColumnOrder(0);
 
-                    b.Property<string>("ContactListId")
-                        .HasColumnType("varchar(255)");
+                    b.Property<string>("ContactId")
+                        .HasColumnType("varchar(255)")
+                        .HasColumnOrder(1);
 
                     b.Property<string>("Last")
                         .HasColumnType("longtext");
@@ -74,21 +77,10 @@ namespace WebAPI.Migrations
                     b.Property<string>("Server")
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContactListId");
+                    b.HasKey("UserId", "ContactId")
+                        .HasName("PK_Contact");
 
                     b.ToTable("Contact");
-                });
-
-            modelBuilder.Entity("WebAPI.Models.ContactList", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ContactList");
                 });
 
             modelBuilder.Entity("WebAPI.Models.Message", b =>
@@ -105,8 +97,11 @@ namespace WebAPI.Migrations
                     b.Property<string>("MessageListId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<bool>("Sent")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<string>("receiverId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("senderId")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -130,12 +125,6 @@ namespace WebAPI.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("ChatsId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("ContactsId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
@@ -144,37 +133,29 @@ namespace WebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChatsId");
-
-                    b.HasIndex("ContactsId");
-
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("WebAPI.Models.Chat", b =>
                 {
                     b.HasOne("WebAPI.Models.ChatList", null)
                         .WithMany("Chats")
-                        .HasForeignKey("ChatListId");
-
-                    b.HasOne("WebAPI.Models.Contact", "Contact")
-                        .WithMany()
-                        .HasForeignKey("ContactId");
+                        .HasForeignKey("ChatListid");
 
                     b.HasOne("WebAPI.Models.MessageList", "Messages")
                         .WithMany()
                         .HasForeignKey("MessagesId");
-
-                    b.Navigation("Contact");
 
                     b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("WebAPI.Models.Contact", b =>
                 {
-                    b.HasOne("WebAPI.Models.ContactList", null)
+                    b.HasOne("WebAPI.Models.User", null)
                         .WithMany("Contacts")
-                        .HasForeignKey("ContactListId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebAPI.Models.Message", b =>
@@ -184,34 +165,19 @@ namespace WebAPI.Migrations
                         .HasForeignKey("MessageListId");
                 });
 
-            modelBuilder.Entity("WebAPI.Models.User", b =>
-                {
-                    b.HasOne("WebAPI.Models.ChatList", "Chats")
-                        .WithMany()
-                        .HasForeignKey("ChatsId");
-
-                    b.HasOne("WebAPI.Models.ContactList", "Contacts")
-                        .WithMany()
-                        .HasForeignKey("ContactsId");
-
-                    b.Navigation("Chats");
-
-                    b.Navigation("Contacts");
-                });
-
             modelBuilder.Entity("WebAPI.Models.ChatList", b =>
                 {
                     b.Navigation("Chats");
                 });
 
-            modelBuilder.Entity("WebAPI.Models.ContactList", b =>
-                {
-                    b.Navigation("Contacts");
-                });
-
             modelBuilder.Entity("WebAPI.Models.MessageList", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("WebAPI.Models.User", b =>
+                {
+                    b.Navigation("Contacts");
                 });
 #pragma warning restore 612, 618
         }

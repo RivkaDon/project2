@@ -21,35 +21,6 @@ namespace WebAPI.Controllers
             userService = us;
         }
 
-        /*private int updateChat(string action, string id1, string id2 = null, string content = null, DateTime? now = null)
-        {
-            Global.Id = User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value;
-            Chat c = chatService.Get(id1, Global.Id); // Global.id
-
-            if (c != null)
-            {
-                //messageService = new MessageService(c);
-
-                switch (action)
-                {
-                    case "post":
-                        //if (content == null) return 1;
-                        messageService.SendMessage(Global.Id, id1, content, true);
-                        break;
-                    case "put":
-                        messageService.Edit(id2, true, content, now);
-                        break;
-                    case "delete":
-                        messageService.Delete(id2);
-                        break;
-                }
-                
-                //chatService = new ChatService(); // Global.Id
-                return 0;
-            }
-            if (!userService.Exists(id1)) return 0;
-            return 1;
-        }*/
 
         /// <summary>
         /// Returns all contacts.
